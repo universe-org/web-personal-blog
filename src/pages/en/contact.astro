@@ -1,0 +1,97 @@
+---
+// src/pages/en/contact.astro
+// Uses Formspree — sign up free at formspree.io and replace FORMSPREE_ID below.
+import Base from "../../layouts/Base.astro";
+import { ui, siteConfig } from "../../data/site";
+
+const lang = "en";
+const t = ui[lang].contact;
+const FORMSPREE_ID = "xdavejzr"; // [REPLACE] e.g. "xpwzgkrl"
+---
+<Base lang={lang} title={t.heading.replace(".", "")}>
+  <section class="section" style="padding-top: 0.5rem; max-width: 520px;">
+    <p class="section-heading">// contact</p>
+    <h1>{t.heading}</h1>
+    <p style="margin-top: 1rem; margin-bottom: 2rem;">{t.subheading}</p>
+
+    <form id="contact-form" action={`https://formspree.io/f/${FORMSPREE_ID}`} method="POST"
+      style="display: flex; flex-direction: column; gap: 14px;">
+
+      <div>
+        <label style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-3); display: block; margin-bottom: 6px;">
+          name
+        </label>
+        <input type="text" name="name" required placeholder={t.namePlaceholder}
+          style="width: 100%; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius); padding: 10px 14px; color: var(--text); font-size: 0.875rem; font-family: var(--font-sans); outline: none;" />
+      </div>
+
+      <div>
+        <label style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-3); display: block; margin-bottom: 6px;">
+          email
+        </label>
+        <input type="email" name="email" required placeholder={t.emailPlaceholder}
+          style="width: 100%; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius); padding: 10px 14px; color: var(--text); font-size: 0.875rem; font-family: var(--font-sans); outline: none;" />
+      </div>
+
+      <div>
+        <label style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-3); display: block; margin-bottom: 6px;">
+          message
+        </label>
+        <textarea name="message" required rows="6" placeholder={t.messagePlaceholder}
+          style="width: 100%; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: var(--radius); padding: 10px 14px; color: var(--text); font-size: 0.875rem; font-family: var(--font-sans); outline: none; resize: vertical;"></textarea>
+      </div>
+
+      <input type="hidden" name="_subject" value={`[devopsuniverse.cloud] New contact`} />
+
+      <button type="submit"
+        style="align-self: flex-start; font-size: 0.8rem; font-family: var(--font-mono); padding: 10px 20px; border-radius: var(--radius); background: var(--accent-2); border: none; color: #fff; cursor: pointer; transition: opacity 150ms ease;">
+        {t.send} →
+      </button>
+
+      <p id="form-status" style="display: none; font-size: 0.82rem; font-family: var(--font-mono);"></p>
+    </form>
+
+    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+      <p style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-3);">or reach me directly</p>
+      <a href={`mailto:${siteConfig.email}`}
+        style="font-size: 0.875rem; color: var(--accent); text-decoration: none; display: inline-block; margin-top: 6px;">
+        {siteConfig.email}
+      </a>
+    </div>
+  </section>
+</Base>
+
+<script define:vars={{ successMsg: t.successMsg, errorMsg: t.errorMsg }}>
+  const form   = document.getElementById("contact-form");
+  const status = document.getElementById("form-status");
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector("button[type=submit]");
+    btn.textContent = "Sending…";
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        form.reset();
+        status.textContent = successMsg;
+        status.style.color = "var(--teal)";
+      } else {
+        status.textContent = errorMsg;
+        status.style.color = "var(--amber)";
+      }
+    } catch {
+      status.textContent = errorMsg;
+      status.style.color = "var(--amber)";
+    }
+
+    status.style.display = "block";
+    btn.textContent = "Send message →";
+    btn.disabled = false;
+  });
+</script>

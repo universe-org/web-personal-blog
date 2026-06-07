@@ -1,0 +1,98 @@
+---
+// src/pages/en/portfolio.astro
+import Base from "../../layouts/Base.astro";
+import { ui } from "../../data/site";
+import { projects } from "../../data/projects";
+
+const lang = "en";
+const t = ui[lang].portfolio;
+---
+<Base lang={lang} title={t.heading.replace(".", "")}>
+  <section class="section" style="padding-top: 0.5rem;">
+    <p class="section-heading">// portfolio</p>
+    <h1>{t.heading}</h1>
+
+    <!-- Filter bar -->
+    <div style="display: flex; gap: 8px; margin: 1.5rem 0 2rem; flex-wrap: wrap;" id="filter-bar">
+      {[
+        { id: "all",        label: t.filterAll },
+        { id: "cloud",      label: t.filterCloud },
+        { id: "devsecops",  label: t.filterDevsecops },
+        { id: "automation", label: t.filterAutomation },
+        { id: "oss",        label: t.filterOss },
+      ].map(f => (
+        <button
+          data-filter={f.id}
+          class={`filter-btn ${f.id === "all" ? "active" : ""}`}
+          style="font-size: 0.75rem; font-family: var(--font-mono); padding: 5px 12px; border-radius: var(--radius); background: transparent; border: 1px solid var(--border-2); color: var(--text-2); cursor: pointer; transition: all 150ms ease;"
+        >
+          {f.label}
+        </button>
+      ))}
+    </div>
+
+    <!-- Projects grid -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;" id="projects-grid">
+      {projects.map(project => (
+        <div
+          class="card project-card"
+          data-categories={project.categories.join(",")}
+          style="display: flex; flex-direction: column; transition: border-color 150ms ease;"
+        >
+          {project.featured && (
+            <span style="font-size: 0.65rem; font-family: var(--font-mono); color: var(--teal); margin-bottom: 8px;">
+              ★ featured
+            </span>
+          )}
+          <h3 style="color: var(--text); font-size: 0.9rem; margin-bottom: 8px;">{project.title[lang]}</h3>
+          <p style="font-size: 0.82rem; color: var(--text-2); line-height: 1.6; flex: 1;">{project.description[lang]}</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px;">
+            {project.tags.map(tag => <span class="tag">{tag}</span>)}
+          </div>
+          {(project.repoUrl || project.demoUrl) && (
+            <div style="display: flex; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+              {project.repoUrl && (
+                <a href={project.repoUrl} target="_blank" rel="noopener"
+                  style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--accent); text-decoration: none;">
+                  {t.viewRepo} →
+                </a>
+              )}
+              {project.demoUrl && (
+                <a href={project.demoUrl} target="_blank" rel="noopener"
+                  style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--teal); text-decoration: none;">
+                  {t.viewDemo} →
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  const cards   = document.querySelectorAll<HTMLElement>(".project-card");
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter!;
+      buttons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      cards.forEach(card => {
+        const cats = card.dataset.categories!.split(",");
+        card.style.display = filter === "all" || cats.includes(filter) ? "flex" : "none";
+      });
+    });
+  });
+</script>
+
+<style>
+  .filter-btn.active {
+    background: var(--bg-3) !important;
+    color: var(--accent) !important;
+    border-color: var(--accent-2) !important;
+  }
+  .project-card:hover { border-color: var(--border-2); }
+</style>

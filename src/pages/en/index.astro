@@ -1,0 +1,85 @@
+---
+// src/pages/en/index.astro
+import Base from "../../layouts/Base.astro";
+import { ui, siteConfig } from "../../data/site";
+import { certifications, stats } from "../../data/resume";
+
+const lang = "en";
+const t = ui[lang];
+---
+<Base lang={lang}>
+  <!-- Hero -->
+  <section class="section" style="padding-top: 0.5rem;">
+    <p class="section-heading">// about_me</p>
+    <h1>{t.about.heading}</h1>
+    <p style="margin-top: 1.25rem; max-width: 560px; font-size: 1rem;">
+      {t.about.intro}
+    </p>
+
+    <!-- Stats -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 2.5rem;">
+      {[
+        { value: `${stats.yearsExperience}+`, label: "Years exp." },
+        { value: `${stats.certifications}`,   label: "Certs" },
+        { value: `${stats.cloudProviders}`,   label: "Cloud providers" },
+        { value: `${stats.openSourceProjects}`, label: "OSS projects" },
+      ].map(s => (
+        <div class="card" style="text-align: center; padding: 1rem 0.75rem;">
+          <p style="font-size: 1.75rem; font-weight: 700; color: var(--text); font-family: var(--font-mono);">{s.value}</p>
+          <p style="font-size: 0.7rem; color: var(--text-3); font-family: var(--font-mono); margin-top: 4px;">{s.label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- What I do -->
+  <section class="section">
+    <p class="section-heading">// {t.about.doing.toLowerCase().replace(/ /g, "_")}</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      {t.services.map(s => (
+        <div class="card">
+          <h3 style="color: var(--teal); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 8px;">
+            {s.title}
+          </h3>
+          <p style="font-size: 0.85rem; line-height: 1.65;">{s.description}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Tech stack -->
+  <section class="section">
+    <p class="section-heading">// tech_stack</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      {[
+        "Kubernetes","Terraform","Docker","Helm","GitHub Actions",
+        "Azure DevOps","GCP","AWS","Azure","OCI","Prometheus",
+        "Grafana","Ansible","Python","Bash","Microcks","OPA",
+        "Trivy","Vault","ArgoCD",
+      ].map(tech => (
+        <span class="tag">{tech}</span>
+      ))}
+    </div>
+  </section>
+
+  <!-- Cert highlights -->
+  <section class="section">
+    <p class="section-heading">// certifications</p>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      {certifications.map(group => (
+        <div class="card" style="display: flex; align-items: flex-start; gap: 1rem;">
+          <p style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-3); min-width: 130px; padding-top: 3px;">
+            {group.vendor}
+          </p>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+            {group.items.map(item => (
+              item.url
+                ? <a href={item.url} target="_blank" rel="noopener" class="tag" style="color: var(--accent); border-color: rgba(91,156,246,0.3); text-decoration: none;">{item.name}</a>
+                : <span class="tag">{item.name}</span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Base>
