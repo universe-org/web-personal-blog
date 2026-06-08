@@ -181,6 +181,15 @@ const buildVersion = import.meta.env.GITHUB_SHA?.slice(0, 7) ?? 'dev';
       <div id="main-inner">
         <slot />
       </div>
+      <footer class="site-footer">
+        <div class="footer-build">
+          <span class="footer-dot"></span>
+          <span>build</span>
+        </div>
+        <code>{buildVersion}</code>
+        <span class="footer-sep">·</span>
+        <span>{buildTime}</span>
+      </footer>
     </main>
 
   </div>

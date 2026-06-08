@@ -25,7 +25,7 @@ const t = ui[lang].resume;
           <p class="section-heading">Certificaciones</p>
           {certifications.map(group => (
             <div style="margin-bottom:1rem;">
-              <p style={`font-size:1.35rem;font-weight:800;margin-bottom:10px;display:block;letter-spacing:-0.01em;color:${ group.color === "cncf" ? "#2dd4a0" : group.color === "hashi" ? "#a78bfa" : group.color === "azure" ? "#5b9cf6" : group.color === "aws" ? "#f59e0b" : group.color === "github" ? "#c9c8c4" : "#9a9890" }`}>{group.vendor}</p>
+              <p class="vendor-name">{group.vendor}</p>
               <div style="display:flex;flex-wrap:wrap;gap:6px;">
                 {group.items.map(item => <span class={`tag cert-${group.color}`}>{item.name}</span>)}
               </div>
@@ -89,17 +89,14 @@ const t = ui[lang].resume;
   .cert-github { color:#c9c8c4;border-color:rgba(201,200,196,0.3)!important; }
   .cert-gray   { color:#9a9890;border-color:rgba(154,152,144,0.2)!important; }
 
-  .vendor-label {
-    font-size: 1rem;
+  .vendor-name {
+    font-size: 1.05rem;
     font-weight: 700;
-    margin-bottom: 8px;
-    display: inline-block;
+    margin-bottom: 10px;
+    display: block;
     letter-spacing: -0.01em;
+    color: var(--text);
+    text-transform: uppercase;
+    font-family: var(--font-mono);
   }
-  .vendor-cncf   { color: #2dd4a0; }
-  .vendor-github { color: #c9c8c4; }
-  .vendor-hashi  { color: #a78bfa; }
-  .vendor-azure  { color: #5b9cf6; }
-  .vendor-aws    { color: #f59e0b; }
-  .vendor-gray   { color: #9a9890; }
 </style>
