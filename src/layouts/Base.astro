@@ -26,6 +26,8 @@ const navItems = [
 ];
 
 const currentPath = Astro.url.pathname;
+const buildTime = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
+const buildVersion = import.meta.env.GITHUB_SHA?.slice(0, 7) ?? 'dev';
 ---
 <!doctype html>
 <html lang={lang}>
@@ -560,6 +562,39 @@ const currentPath = Astro.url.pathname;
     border-radius: 2px; margin: 12px 0 1.5rem;
   }
   a { color: var(--accent); }
+
+  .site-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--text-3);
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+    flex-wrap: wrap;
+  }
+  .footer-sep { color: var(--border-2); }
+  .footer-build { display: flex; align-items: center; gap: 6px; }
+  .footer-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 5px var(--teal);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+  .site-footer code {
+    color: var(--accent);
+    font-size: 0.72rem;
+    background: var(--bg-3);
+    padding: 1px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--border-2);
+  }
 
   .cursor {
     display: inline-block;
