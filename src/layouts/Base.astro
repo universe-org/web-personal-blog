@@ -238,6 +238,7 @@ const currentPath = Astro.url.pathname;
     min-height: 100vh;
     position: relative;
     z-index: 1;
+    padding: 0 2rem;
   }
 
   /* ══════════════════════════════
@@ -250,6 +251,7 @@ const currentPath = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 200;
+    margin: 0 -2rem; /* cancel page-wrapper padding */
   }
 
   .header-inner {
@@ -347,6 +349,11 @@ const currentPath = Astro.url.pathname;
     max-width: 1280px;
     margin: 0 auto;
     width: 100%;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
   }
 
   /* ── Sidebar ── */
@@ -358,8 +365,8 @@ const currentPath = Astro.url.pathname;
     flex-direction: column;
     padding: 1.5rem 1rem;
     position: sticky;
-    top: var(--header-h);
-    height: calc(100vh - var(--header-h));
+    top: calc(var(--header-h) + 1.5rem);
+    height: calc(100vh - var(--header-h) - 1.5rem);
     overflow-y: auto;
     flex-shrink: 0;
   }
@@ -479,7 +486,9 @@ const currentPath = Astro.url.pathname;
     }
     #sidebar.open { transform: translateX(0); }
     #main-inner { padding: 2rem 1.25rem 3rem; }
-    .top-header { padding: 1rem; }
+    .top-header { padding: 1rem; margin: 0 -1rem; }
+    .page-wrapper { padding: 0 1rem; }
+    .body-layout { margin-top: 1rem; margin-bottom: 1rem; }
     .header-divider { display: none; }
     .header-meta { display: none; }
     .geo-decoration { display: none; }
