@@ -10,7 +10,7 @@ const t = ui[lang].resume;
   <section class="section" style="padding-top:0.5rem;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:1rem;">
       <div>
-        <p class="section-heading">currículum</p>
+        <p class="section-heading">Currículum</p>
         <h1>Currículum<span class="heading-dot">.</span></h1>
         <div class="heading-line"></div>
       </div>
@@ -22,7 +22,7 @@ const t = ui[lang].resume;
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;">
       <div>
         <div style="margin-bottom:2rem;">
-          <p class="section-heading">{t.certHeading.toLowerCase()}</p>
+          <p class="section-heading">Certificaciones</p>
           {certifications.map(group => (
             <div style="margin-bottom:1rem;">
               <p style="font-size:0.68rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:6px;">{group.vendor}</p>
@@ -33,7 +33,7 @@ const t = ui[lang].resume;
           ))}
         </div>
         <div style="margin-bottom:2rem;">
-          <p class="section-heading">{t.skillHeading.toLowerCase()}</p>
+          <p class="section-heading">Skills</p>
           {skills.map(group => (
             <div style="margin-bottom:0.875rem;">
               <p style="font-size:0.68rem;font-family:var(--font-mono);color:var(--text-3);margin-bottom:5px;">{group.category[lang]}</p>
@@ -42,7 +42,7 @@ const t = ui[lang].resume;
           ))}
         </div>
         <div>
-          <p class="section-heading">{t.eduHeading.toLowerCase()}</p>
+          <p class="section-heading">Educación</p>
           {education.map(edu => (
             <div class="card" style="margin-bottom:8px;">
               <p style="font-weight:600;font-size:0.875rem;color:var(--text);">{edu.degree[lang]}</p>
@@ -53,7 +53,7 @@ const t = ui[lang].resume;
       </div>
       <div>
         <div style="margin-bottom:2rem;">
-          <p class="section-heading">{t.expHeading.toLowerCase()}</p>
+          <p class="section-heading">Experiencia</p>
           {experience.map(job => (
             <div class="card" style="margin-bottom:10px;">
               <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
@@ -69,7 +69,7 @@ const t = ui[lang].resume;
           ))}
         </div>
         <div>
-          <p class="section-heading">{t.ossHeading}</p>
+          <p class="section-heading">Open Source</p>
           {openSource.map(oss => (
             <div class="card">
               <p style="font-weight:600;font-size:0.875rem;color:var(--text);">{oss.project} <span style="font-size:0.7rem;color:var(--teal);font-family:var(--font-mono);">{oss.org}</span></p>

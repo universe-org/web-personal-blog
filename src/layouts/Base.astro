@@ -255,6 +255,9 @@ const currentPath = Astro.url.pathname;
     z-index: 200;
   }
 
+  /* Ensure html/body don't clip sticky */
+  html, body { overflow-x: hidden; }
+
   .header-inner {
     display: flex;
     align-items: center;
@@ -271,7 +274,7 @@ const currentPath = Astro.url.pathname;
     color: #fff; font-family: var(--font-mono);
     flex-shrink: 0;
     border: 2px solid rgba(91,156,246,0.4);
-    overflow: hidden;
+    /* overflow: hidden removed — breaks sticky */;
   }
   .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -444,18 +447,12 @@ const currentPath = Astro.url.pathname;
   }
   .section { margin-bottom: 3.5rem; }
   .section-heading {
-    font-size: 0.75rem;
-    font-family: var(--font-mono);
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-2);
-    margin-bottom: 1rem;
-    padding: 6px 10px;
-    background: var(--bg-3);
-    border: 1px solid var(--border-2);
-    border-radius: 6px;
-    display: inline-block;
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    display: block;
+    letter-spacing: -0.01em;
   }
   .card {
     background: var(--bg-2); border: 1px solid var(--border);
