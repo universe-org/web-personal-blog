@@ -1,0 +1,109 @@
+---
+import Base from "../../layouts/Base.astro";
+import { ui } from "../../data/site";
+
+const lang = "es";
+const t = ui[lang].blog;
+
+const posts = [
+  {
+    slug: "devsecops-github-actions",
+    title: "Integrando seguridad en pipelines CI/CD con GitHub Actions",
+    excerpt: "Guía práctica para agregar escaneo de contenedores, detección de secretos y linting de IaC a tus workflows de GitHub Actions sin frenar a los developers.",
+    date: "2025-03-12",
+    tags: ["DevSecOps", "GitHub Actions", "Trivy", "Gitleaks"],
+    readingTime: 8,
+  },
+  {
+    slug: "kubestronaut-journey",
+    title: "Cómo me convertí en Kubestronaut: los 5 exámenes de Kubernetes de CNCF",
+    excerpt: "Mi estrategia de estudio, tiempos y tips para pasar KCNA, KCSA, CKA, CKAD y CKS uno tras otro — incluyendo lo que casi me hace reprobar en cada uno.",
+    date: "2025-01-28",
+    tags: ["Kubernetes", "CNCF", "Certificaciones", "Carrera"],
+    readingTime: 12,
+  },
+  {
+    slug: "arc-runners-aks",
+    title: "Runners efímeros de GitHub Actions en AKS con Actions Runner Controller",
+    excerpt: "Cómo configurar runners self-hosted elásticos y efímeros en Azure Kubernetes Service usando ARC — incluyendo autoescalado con KEDA y problemas comunes de almacenamiento.",
+    date: "2025-05-04",
+    tags: ["GitHub Actions", "AKS", "Kubernetes", "ARC"],
+    readingTime: 10,
+  },
+  {
+    slug: "github-copilot-enterprise-rollout",
+    title: "Desplegando GitHub Copilot a escala enterprise: lecciones aprendidas",
+    excerpt: "Qué funciona realmente al desplegar Copilot a cientos de developers — gobierno de licencias, guías de prompting, métricas de productividad y cómo manejar a los escépticos.",
+    date: "2025-02-17",
+    tags: ["GitHub Copilot", "GitHub Enterprise", "DevEx"],
+    readingTime: 9,
+  },
+  {
+    slug: "terraform-azure-governance",
+    title: "Gobierno Azure a escala con Terraform y Azure Policy",
+    excerpt: "Cómo estructurar Management Groups, RBAC y definiciones de Policy como módulos Terraform para aplicar guardrails a nivel org sin generar toil en los equipos.",
+    date: "2024-11-05",
+    tags: ["Terraform", "Azure", "Azure Policy", "IaC"],
+    readingTime: 11,
+  },
+  {
+    slug: "microcks-contract-testing",
+    title: "Contract testing de APIs en CI con Microcks y GitHub Actions",
+    excerpt: "Una introducción a Microcks como solución CNCF para mocking y contract testing de APIs, con un walkthrough de su integración en un pipeline de GitHub Actions.",
+    date: "2024-09-22",
+    tags: ["Microcks", "API Testing", "CNCF", "GitHub Actions"],
+    readingTime: 7,
+  },
+];
+
+function formatDate(d: string) {
+  return new Date(d).toLocaleDateString("es-PE", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+<Base lang={lang} title="Blog">
+  <section class="section" style="padding-top: 0.5rem;">
+    <p class="section-heading">// blog</p>
+    <h1>Blog<span class="heading-dot">.</span></h1>
+    <div class="heading-line"></div>
+    <p style="margin-bottom: 2.5rem; max-width: 520px;">
+      Reflexiones sobre DevSecOps, plataformas cloud, Kubernetes y las herramientas que uso en el día a día.
+    </p>
+
+    <div class="posts-list">
+      {posts.map(post => (
+        <article class="post-card">
+          <div class="post-meta">
+            <time class="post-date">{formatDate(post.date)}</time>
+            <span class="post-read">{post.readingTime} {t.minRead}</span>
+          </div>
+          <h2 class="post-title">{post.title}</h2>
+          <p class="post-excerpt">{post.excerpt}</p>
+          <div class="post-footer">
+            <div class="post-tags">
+              {post.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+            <span class="post-coming">Próximamente</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .posts-list { display: flex; flex-direction: column; gap: 2px; }
+  .post-card {
+    background: var(--bg-2); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.75rem 2rem;
+    transition: border-color var(--ease), background var(--ease);
+  }
+  .post-card:hover { border-color: var(--border-2); background: var(--bg-3); }
+  .post-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .post-date { font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-3); }
+  .post-read { font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-3); padding-left: 12px; border-left: 1px solid var(--border-2); }
+  .post-title { font-size: 1.125rem; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 10px; letter-spacing: -0.01em; }
+  .post-excerpt { font-size: 0.875rem; color: var(--text-2); line-height: 1.7; margin-bottom: 1.25rem; }
+  .post-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .post-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .post-coming { font-size: 0.68rem; font-family: var(--font-mono); color: var(--text-3); border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px; }
+</style>
