@@ -25,8 +25,8 @@ const t = ui[lang].resume;
           <p class="section-heading">Certificaciones</p>
           {certifications.map(group => (
             <div style="margin-bottom:1rem;">
-              <p style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.01em;">{group.vendor}</p>
-              <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <p class={`vendor-label vendor-${group.color}`}>{group.vendor}</p>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
                 {group.items.map(item => <span class={`tag cert-${group.color}`}>{item.name}</span>)}
               </div>
             </div>
@@ -82,10 +82,24 @@ const t = ui[lang].resume;
   </section>
 </Base>
 <style>
-  .cert-cncf   { color:#0d4a38;background:#2dd4a0;border-color:#2dd4a0!important;font-weight:700;font-size:0.82rem; }
-  .cert-hashi  { color:#2d1a6e;background:#a78bfa;border-color:#a78bfa!important;font-weight:700;font-size:0.82rem; }
-  .cert-azure  { color:#0a2a6e;background:#5b9cf6;border-color:#5b9cf6!important;font-weight:700;font-size:0.82rem; }
-  .cert-aws    { color:#5a3200;background:#f59e0b;border-color:#f59e0b!important;font-weight:700;font-size:0.82rem; }
-  .cert-github { color:#2a2a2a;background:#c9c8c4;border-color:#c9c8c4!important;font-weight:700;font-size:0.82rem; }
-  .cert-gray   { color:#1a1a2e;background:#7c7b89;border-color:#7c7b89!important;font-weight:700;font-size:0.82rem; }
+  .cert-cncf   { color:#2dd4a0;border-color:rgba(45,212,160,0.3)!important; }
+  .cert-hashi  { color:#a78bfa;border-color:rgba(167,139,250,0.3)!important; }
+  .cert-azure  { color:#5b9cf6;border-color:rgba(91,156,246,0.3)!important; }
+  .cert-aws    { color:#f59e0b;border-color:rgba(245,158,11,0.3)!important; }
+  .cert-github { color:#c9c8c4;border-color:rgba(201,200,196,0.3)!important; }
+  .cert-gray   { color:#9a9890;border-color:rgba(154,152,144,0.2)!important; }
+
+  .vendor-label {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: inline-block;
+    letter-spacing: -0.01em;
+  }
+  .vendor-cncf   { color: #2dd4a0; }
+  .vendor-github { color: #c9c8c4; }
+  .vendor-hashi  { color: #a78bfa; }
+  .vendor-azure  { color: #5b9cf6; }
+  .vendor-aws    { color: #f59e0b; }
+  .vendor-gray   { color: #9a9890; }
 </style>
