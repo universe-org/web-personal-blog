@@ -52,7 +52,7 @@ const t = ui[lang];
     <div style="display:flex;flex-direction:column;gap:8px;">
       {certifications.map(group => (
         <div class="card" style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
-          <p class="cert-vendor">{group.vendor}</p>
+          <p style={`font-size:0.85rem;font-weight:700;font-family:var(--font-mono);min-width:160px;padding-top:3px;color:${group.color==="cncf"?"#60a5fa":group.color==="hashi"?"#a78bfa":group.color==="azure"?"#7dd3fc":group.color==="aws"?"#f59e0b":group.color==="github"?"#c9c8c4":"#9a9890"}`}>{group.vendor}</p>
           <div style="display:flex;flex-wrap:wrap;gap:6px;flex:1;">
             {group.items.map(item => (
               item.url
@@ -77,9 +77,9 @@ const t = ui[lang];
   .service-title { font-size:0.8125rem;font-weight:600;color:var(--teal);font-family:var(--font-mono);margin-bottom:8px; }
   .service-desc { font-size:0.8375rem;line-height:1.65;color:var(--text-2); }
   .cert-vendor { font-size:0.68rem;font-family:var(--font-mono);color:var(--text-3);min-width:160px;padding-top:3px; }
-  .cert-cncf   { color:#2dd4a0;border-color:rgba(45,212,160,0.3)!important; }
+  .cert-cncf   { color:#60a5fa;border-color:rgba(96,165,250,0.3)!important; }
   .cert-hashi  { color:#a78bfa;border-color:rgba(167,139,250,0.3)!important; }
-  .cert-azure  { color:#5b9cf6;border-color:rgba(91,156,246,0.3)!important; }
+  .cert-azure  { color:#7dd3fc;border-color:rgba(125,211,252,0.3)!important; }
   .cert-aws    { color:#f59e0b;border-color:rgba(245,158,11,0.3)!important; }
   .cert-github { color:#c9c8c4;border-color:rgba(201,200,196,0.3)!important; }
   .cert-gray   { color:#9a9890;border-color:rgba(154,152,144,0.2)!important; }
