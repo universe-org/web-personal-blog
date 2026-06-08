@@ -74,9 +74,7 @@ const currentPath = Astro.url.pathname;
 
       <!-- Left: avatar + name + socials -->
       <div class="header-profile">
-        <div class="header-avatar">
-          <img src="/personal-photo.jpeg" alt="David Aguirre" />
-        </div>
+        <div class="header-avatar">DA</div>
         <div class="header-identity">
           <p class="header-name">{siteConfig.name}</p>
           <p class="header-title">{siteConfig.title[lang]}</p>
@@ -251,7 +249,7 @@ const currentPath = Astro.url.pathname;
     background: var(--bg-2);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 1.25rem 1.75rem;
+    padding: 1rem 1.75rem;
     position: sticky;
     top: 1.5rem;
     z-index: 200;
@@ -284,11 +282,12 @@ const currentPath = Astro.url.pathname;
   .header-profile { display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
   .header-identity { display: flex; flex-direction: column; gap: 4px; }
   .header-name {
-    font-size: 1.1rem; font-weight: 700; color: var(--text); line-height: 1.2;
+    font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.2;
   }
   .header-title {
-    font-size: 0.75rem; color: var(--text-2);
+    font-size: 0.875rem; color: var(--text-2);
     font-family: var(--font-mono);
+    margin-top: 2px;
   }
   .header-socials { display: flex; gap: 10px; margin-top: 4px; }
   .header-socials a {
@@ -319,13 +318,13 @@ const currentPath = Astro.url.pathname;
   }
   .meta-item:last-child { border-right: none; }
   .meta-label {
-    font-size: 0.6rem; font-family: var(--font-mono);
+    font-size: 0.65rem; font-family: var(--font-mono);
     letter-spacing: 0.1em; color: var(--text-3);
     text-transform: uppercase;
   }
   .meta-value {
     display: flex; align-items: center; gap: 6px;
-    font-size: 0.82rem; color: var(--text-2);
+    font-size: 0.9375rem; color: var(--text-2);
   }
   .meta-link {
     text-decoration: none; color: var(--text-2);
@@ -433,10 +432,10 @@ const currentPath = Astro.url.pathname;
   /* ══════════════════════════════
      TYPOGRAPHY
   ══════════════════════════════ */
-  h1 { font-size: clamp(2.25rem, 5vw, 3.25rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
-  h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem; }
-  h3 { font-size: 1rem; font-weight: 600; }
-  p  { font-size: 1rem; line-height: 1.8; color: var(--text-2); }
+  h1 { font-size: clamp(2.5rem, 5vw, 3.75rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+  h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1.25rem; }
+  h3 { font-size: 1.125rem; font-weight: 600; }
+  p  { font-size: 1.0625rem; line-height: 1.85; color: var(--text-2); }
 
   /* ══════════════════════════════
      COMPONENTS
@@ -449,7 +448,7 @@ const currentPath = Astro.url.pathname;
   }
   .section { margin-bottom: 3.5rem; }
   .section-heading {
-    font-size: 1.375rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: var(--text);
     margin-bottom: 1.5rem;
