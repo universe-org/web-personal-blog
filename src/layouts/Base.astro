@@ -79,7 +79,9 @@ const currentPath = Astro.url.pathname;
         </div>
         <div class="header-identity">
           <p class="header-name">{siteConfig.name}</p>
-          <p class="header-title">{siteConfig.title[lang]}</p>
+          <p class="header-title">
+            <span id="typewriter"></span><span class="cursor">|</span>
+          </p>
           <div class="header-socials">
             <a href={siteConfig.social.github} target="_blank" rel="noopener" aria-label="GitHub">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.7C6.73 19.91 6.14 18 6.14 18c-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.8c.85.004 1.71.115 2.51.337 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10.01 10.01 0 0 0 22 12c0-5.52-4.48-10-10-10z"/></svg>
@@ -469,6 +471,18 @@ const currentPath = Astro.url.pathname;
     border-radius: 2px; margin: 12px 0 1.5rem;
   }
   a { color: var(--accent); }
+
+  .cursor {
+    display: inline-block;
+    color: var(--teal);
+    font-weight: 300;
+    animation: blink 1s step-end infinite;
+    margin-left: 1px;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
   code { font-family: var(--font-mono); font-size: 0.85em; }
 
   /* ══════════════════════════════
@@ -499,5 +513,50 @@ const currentPath = Astro.url.pathname;
     .geo-decoration { display: none; }
   }
 </style>
+<script>
+  const titles = [
+    "DevOps Engineer",
+    "Cloud Engineer",
+    "Platform Engineer",
+  ];
+
+  const el     = document.getElementById("typewriter");
+  const cursor = document.querySelector(".cursor");
+  let   ti     = 0;   // title index
+  let   ci     = 0;   // char index
+  let   typing = true;
+
+  const SPEED_TYPE  = 80;
+  const SPEED_ERASE = 45;
+  const PAUSE_AFTER = 2000;
+  const PAUSE_BEFORE = 400;
+
+  function tick() {
+    const current = titles[ti];
+
+    if (typing) {
+      el.textContent = current.slice(0, ci + 1);
+      ci++;
+      if (ci === current.length) {
+        typing = false;
+        setTimeout(tick, PAUSE_AFTER);
+        return;
+      }
+      setTimeout(tick, SPEED_TYPE);
+    } else {
+      el.textContent = current.slice(0, ci - 1);
+      ci--;
+      if (ci === 0) {
+        typing = true;
+        ti = (ti + 1) % titles.length;
+        setTimeout(tick, PAUSE_BEFORE);
+        return;
+      }
+      setTimeout(tick, SPEED_ERASE);
+    }
+  }
+
+  setTimeout(tick, 600);
+</script>
 </body>
 </html>
