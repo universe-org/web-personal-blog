@@ -8,7 +8,7 @@ const t = ui[lang];
 ---
 <Base lang={lang}>
   <section class="section" style="padding-top:0.5rem;">
-    <p class="section-heading">// sobre_mi</p>
+    <p class="section-heading">sobre_mi</p>
     <h1>Sobre mí<span class="heading-dot">.</span></h1>
     <div class="heading-line"></div>
     <p style="max-width:580px;font-size:0.9375rem;line-height:1.8;">{t.about.intro}</p>
@@ -29,7 +29,7 @@ const t = ui[lang];
   </section>
 
   <section class="section">
-    <p class="section-heading">// qué_hago</p>
+    <p class="section-heading">qué_hago</p>
     <div class="services-grid">
       {t.services.map(s => (
         <div class="service-card">
@@ -41,14 +41,14 @@ const t = ui[lang];
   </section>
 
   <section class="section">
-    <p class="section-heading">// tech_stack</p>
+    <p class="section-heading">tech_stack</p>
     <div style="display:flex;flex-wrap:wrap;gap:7px;">
       {["Kubernetes","AKS","EKS","Docker","Helm","GitHub Actions","Azure DevOps","GitHub Enterprise Cloud","GCP","AWS","Azure","OCI","Terraform","Ansible","Python","Golang","Bash","Prometheus","Grafana","GitHub Copilot","GHAS","Microcks","MCP","ArgoCD","OPA"].map(tech => <span class="tag">{tech}</span>)}
     </div>
   </section>
 
   <section class="section">
-    <p class="section-heading">// certificaciones</p>
+    <p class="section-heading">certificaciones</p>
     <div style="display:flex;flex-direction:column;gap:8px;">
       {certifications.map(group => (
         <div class="card" style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;">

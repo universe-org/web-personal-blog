@@ -10,7 +10,7 @@ const t = ui[lang].resume;
   <section class="section" style="padding-top:0.5rem;">
     <div class="resume-header">
       <div>
-        <p class="section-heading">// resume</p>
+        <p class="section-heading">resume</p>
         <h1>Resume<span class="heading-dot">.</span></h1>
         <div class="heading-line"></div>
       </div>
@@ -25,7 +25,7 @@ const t = ui[lang].resume;
       <!-- Left -->
       <div>
         <div class="resume-section">
-          <p class="section-heading">// {t.certHeading.toLowerCase()}</p>
+          <p class="section-heading">{t.certHeading.toLowerCase()}</p>
           {certifications.map(group => (
             <div class="cert-group">
               <p class="cert-vendor-label">{group.vendor}</p>
@@ -41,7 +41,7 @@ const t = ui[lang].resume;
         </div>
 
         <div class="resume-section">
-          <p class="section-heading">// {t.skillHeading.toLowerCase()}</p>
+          <p class="section-heading">{t.skillHeading.toLowerCase()}</p>
           {skills.map(group => (
             <div class="skill-group">
               <p class="skill-cat">{group.category[lang]}</p>
@@ -53,7 +53,7 @@ const t = ui[lang].resume;
         </div>
 
         <div class="resume-section">
-          <p class="section-heading">// {t.eduHeading.toLowerCase()}</p>
+          <p class="section-heading">{t.eduHeading.toLowerCase()}</p>
           {education.map(edu => (
             <div class="card" style="margin-bottom:8px;">
               <p style="font-weight:600;font-size:0.875rem;color:var(--text);">{edu.degree[lang]}</p>
@@ -67,7 +67,7 @@ const t = ui[lang].resume;
       <!-- Right -->
       <div>
         <div class="resume-section">
-          <p class="section-heading">// {t.expHeading.toLowerCase()}</p>
+          <p class="section-heading">{t.expHeading.toLowerCase()}</p>
           {experience.map(job => (
             <div class="card exp-card">
               <div class="exp-header">
@@ -88,7 +88,7 @@ const t = ui[lang].resume;
         </div>
 
         <div class="resume-section">
-          <p class="section-heading">// {t.ossHeading}</p>
+          <p class="section-heading">{t.ossHeading}</p>
           {openSource.map(oss => (
             <div class="card">
               <div class="exp-header">
