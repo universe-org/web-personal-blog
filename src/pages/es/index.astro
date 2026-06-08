@@ -1,28 +1,28 @@
 ---
-// src/pages/es/index.astro
 import Base from "../../layouts/Base.astro";
-import { ui, siteConfig } from "../../data/site";
+import { ui } from "../../data/site";
 import { certifications, stats } from "../../data/resume";
 
 const lang = "es";
 const t = ui[lang];
 ---
 <Base lang={lang}>
-  <section class="section" style="padding-top: 0.5rem;">
+  <section class="section" style="padding-top:0.5rem;">
     <p class="section-heading">// sobre_mi</p>
-    <h1>{t.about.heading}</h1>
-    <p style="margin-top: 1.25rem; max-width: 560px; font-size: 1rem;">{t.about.intro}</p>
+    <h1>Sobre mí<span class="heading-dot">.</span></h1>
+    <div class="heading-line"></div>
+    <p style="max-width:580px;font-size:0.9375rem;line-height:1.8;">{t.about.intro}</p>
 
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 2.5rem;">
+    <div class="stats-grid">
       {[
-        { value: `${stats.yearsExperience}+`, label: "Años de exp." },
-        { value: `${stats.certifications}`,   label: "Certs" },
-        { value: `${stats.cloudProviders}`,   label: "Clouds" },
-        { value: `${stats.openSourceProjects}`, label: "Proyectos OSS" },
+        { value:`${stats.yearsExperience}+`, label:"Años de exp." },
+        { value:`${stats.certifications}`,   label:"Certificaciones" },
+        { value:`${stats.cloudProviders}`,   label:"Clouds" },
+        { value:`${stats.openSourceProjects}`,label:"Proyectos OSS" },
       ].map(s => (
-        <div class="card" style="text-align: center; padding: 1rem 0.75rem;">
-          <p style="font-size: 1.75rem; font-weight: 700; color: var(--text); font-family: var(--font-mono);">{s.value}</p>
-          <p style="font-size: 0.7rem; color: var(--text-3); font-family: var(--font-mono); margin-top: 4px;">{s.label}</p>
+        <div class="stat-card">
+          <p class="stat-value">{s.value}</p>
+          <p class="stat-label">{s.label}</p>
         </div>
       ))}
     </div>
@@ -30,11 +30,11 @@ const t = ui[lang];
 
   <section class="section">
     <p class="section-heading">// qué_hago</p>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    <div class="services-grid">
       {t.services.map(s => (
-        <div class="card">
-          <h3 style="color: var(--teal); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 8px;">{s.title}</h3>
-          <p style="font-size: 0.85rem; line-height: 1.65;">{s.description}</p>
+        <div class="service-card">
+          <h3 class="service-title">{s.title}</h3>
+          <p class="service-desc">{s.description}</p>
         </div>
       ))}
     </div>
@@ -42,24 +42,22 @@ const t = ui[lang];
 
   <section class="section">
     <p class="section-heading">// tech_stack</p>
-    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-      {["Kubernetes","Terraform","Docker","Helm","GitHub Actions","Azure DevOps","GCP","AWS","Azure","OCI","Prometheus","Grafana","Ansible","Python","Bash","Microcks","OPA","Trivy","Vault","ArgoCD"].map(tech => (
-        <span class="tag">{tech}</span>
-      ))}
+    <div style="display:flex;flex-wrap:wrap;gap:7px;">
+      {["Kubernetes","AKS","EKS","Docker","Helm","GitHub Actions","Azure DevOps","GitHub Enterprise Cloud","GCP","AWS","Azure","OCI","Terraform","Ansible","Python","Golang","Bash","Prometheus","Grafana","GitHub Copilot","GHAS","Microcks","MCP","ArgoCD","OPA"].map(tech => <span class="tag">{tech}</span>)}
     </div>
   </section>
 
   <section class="section">
     <p class="section-heading">// certificaciones</p>
-    <div style="display: flex; flex-direction: column; gap: 10px;">
+    <div style="display:flex;flex-direction:column;gap:8px;">
       {certifications.map(group => (
-        <div class="card" style="display: flex; align-items: flex-start; gap: 1rem;">
-          <p style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-3); min-width: 130px; padding-top: 3px;">{group.vendor}</p>
-          <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <div class="card" style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+          <p class="cert-vendor">{group.vendor}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;flex:1;">
             {group.items.map(item => (
               item.url
-                ? <a href={item.url} target="_blank" rel="noopener" class="tag" style="color: var(--accent); border-color: rgba(91,156,246,0.3); text-decoration: none;">{item.name}</a>
-                : <span class="tag">{item.name}</span>
+                ? <a href={item.url} target="_blank" rel="noopener" class={`tag cert-${group.color}`} style="text-decoration:none">{item.name}</a>
+                : <span class={`tag cert-${group.color}`}>{item.name}</span>
             ))}
           </div>
         </div>
@@ -67,3 +65,23 @@ const t = ui[lang];
     </div>
   </section>
 </Base>
+
+<style>
+  .stats-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:2.5rem; }
+  .stat-card { background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 0.75rem;text-align:center; }
+  .stat-value { font-size:1.875rem;font-weight:800;color:var(--text);font-family:var(--font-mono);line-height:1; }
+  .stat-label { font-size:0.68rem;color:var(--text-3);font-family:var(--font-mono);margin-top:6px; }
+  .services-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+  .service-card { background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem 1.5rem;transition:border-color var(--ease); }
+  .service-card:hover { border-color:var(--border-2); }
+  .service-title { font-size:0.8125rem;font-weight:600;color:var(--teal);font-family:var(--font-mono);margin-bottom:8px; }
+  .service-desc { font-size:0.8375rem;line-height:1.65;color:var(--text-2); }
+  .cert-vendor { font-size:0.68rem;font-family:var(--font-mono);color:var(--text-3);min-width:160px;padding-top:3px; }
+  .cert-cncf   { color:#2dd4a0;border-color:rgba(45,212,160,0.3)!important; }
+  .cert-hashi  { color:#a78bfa;border-color:rgba(167,139,250,0.3)!important; }
+  .cert-azure  { color:#5b9cf6;border-color:rgba(91,156,246,0.3)!important; }
+  .cert-aws    { color:#f59e0b;border-color:rgba(245,158,11,0.3)!important; }
+  .cert-github { color:#c9c8c4;border-color:rgba(201,200,196,0.3)!important; }
+  .cert-gray   { color:#9a9890;border-color:rgba(154,152,144,0.2)!important; }
+  @media (max-width:600px) { .stats-grid { grid-template-columns:repeat(2,1fr); } .services-grid { grid-template-columns:1fr; } }
+</style>
