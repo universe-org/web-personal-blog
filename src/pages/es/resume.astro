@@ -25,7 +25,19 @@ const t = ui[lang].resume;
           <p class="section-heading">Certificaciones</p>
           {certifications.map(group => (
             <div style="margin-bottom:1rem;">
-              <p class={`vendor-label vendor-${group.color}`}>{group.vendor}</p>
+              <p style={{
+                fontSize: '1.25rem',
+                fontWeight: '800',
+                marginBottom: '10px',
+                display: 'block',
+                letterSpacing: '-0.01em',
+                color: group.color === 'cncf' ? '#2dd4a0'
+                     : group.color === 'hashi' ? '#a78bfa'
+                     : group.color === 'azure' ? '#5b9cf6'
+                     : group.color === 'aws' ? '#f59e0b'
+                     : group.color === 'github' ? '#c9c8c4'
+                     : '#9a9890'
+              }}>{group.vendor}</p>
               <div style="display:flex;flex-wrap:wrap;gap:6px;">
                 {group.items.map(item => <span class={`tag cert-${group.color}`}>{item.name}</span>)}
               </div>
