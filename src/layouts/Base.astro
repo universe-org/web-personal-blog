@@ -536,6 +536,16 @@ const buildVersion = import.meta.env.GITHUB_SHA?.slice(0, 7) ?? 'dev';
   .cert-gray   { color: #9a9890 !important; border-color: rgba(154,152,144,0.3) !important; }
 
   /* Vendor labels */
+  .vendor-name {
+    font-size: 1.0rem !important;
+    font-weight: 700 !important;
+    font-family: var(--font-mono) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: var(--text) !important;
+    margin-bottom: 10px !important;
+    display: block !important;
+  }
   .vendor-label {
     font-size: 1.1rem !important;
     font-weight: 700 !important;
