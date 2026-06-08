@@ -510,13 +510,32 @@ const currentPath = Astro.url.pathname;
     border-radius: 4px; border: 1px solid var(--border-2);
     color: var(--text-2); background: var(--bg-3);
   }
-  /* Cert tag overrides — must beat .tag global */
-  .tag.cert-cncf   { color:#0d4a38!important;background:#2dd4a0!important;border-color:#2dd4a0!important;font-weight:700;font-size:0.82rem; }
-  .tag.cert-hashi  { color:#2d1a6e!important;background:#a78bfa!important;border-color:#a78bfa!important;font-weight:700;font-size:0.82rem; }
-  .tag.cert-azure  { color:#0a2a6e!important;background:#5b9cf6!important;border-color:#5b9cf6!important;font-weight:700;font-size:0.82rem; }
-  .tag.cert-aws    { color:#5a3200!important;background:#f59e0b!important;border-color:#f59e0b!important;font-weight:700;font-size:0.82rem; }
-  .tag.cert-github { color:#2a2a2a!important;background:#c9c8c4!important;border-color:#c9c8c4!important;font-weight:700;font-size:0.82rem; }
-  .tag.cert-gray   { color:#1a1a2e!important;background:#7c7b89!important;border-color:#7c7b89!important;font-weight:700;font-size:0.82rem; }
+  /* Cert tag overrides */
+  [class*="cert-"] {
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    padding: 4px 12px !important;
+  }
+  .cert-cncf   { color:#0d4a38!important;background:#2dd4a0!important;border-color:#2dd4a0!important; }
+  .cert-hashi  { color:#2d1a6e!important;background:#a78bfa!important;border-color:#a78bfa!important; }
+  .cert-azure  { color:#0a2a6e!important;background:#5b9cf6!important;border-color:#5b9cf6!important; }
+  .cert-aws    { color:#5a3200!important;background:#f59e0b!important;border-color:#f59e0b!important; }
+  .cert-github { color:#1a1a1a!important;background:#e0dfd8!important;border-color:#c9c8c4!important; }
+  .cert-gray   { color:#1a1a2e!important;background:#7c7b89!important;border-color:#7c7b89!important; }
+
+  /* Vendor labels */
+  .vendor-label {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+  }
+  .vendor-cncf   { color: #2dd4a0 !important; }
+  .vendor-github { color: #b0aeaa !important; }
+  .vendor-hashi  { color: #a78bfa !important; }
+  .vendor-azure  { color: #5b9cf6 !important; }
+  .vendor-aws    { color: #f59e0b !important; }
+  .vendor-gray   { color: #9a9890 !important; }
   .section { margin-bottom: 3.5rem; }
   .section-heading {
     font-size: 1.5rem;
