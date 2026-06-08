@@ -74,9 +74,7 @@ const currentPath = Astro.url.pathname;
 
       <!-- Left: avatar + name + socials -->
       <div class="header-profile">
-        <div class="header-avatar">
-          <img src="/personal-photo.jpeg" alt="David Aguirre" />
-        </div>
+        <div class="header-avatar">DA</div>
         <div class="header-identity">
           <p class="header-name">{siteConfig.name}</p>
           <p class="header-title">
@@ -271,14 +269,14 @@ const currentPath = Astro.url.pathname;
   /* Avatar */
   .header-avatar {
     width: 130px; height: 130px;
-    border-radius: 14px;
+    border-radius: 18px;
     background: linear-gradient(135deg, var(--accent-2), var(--teal));
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem; font-weight: 700;
+    font-size: 1.5rem; font-weight: 700;
     color: #fff; font-family: var(--font-mono);
     flex-shrink: 0;
-    border: 2px solid rgba(91,156,246,0.4);
-    /* overflow: hidden removed — breaks sticky */;
+    border: 2px solid rgba(91,156,246,0.35);
+    overflow: hidden;
   }
   .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
