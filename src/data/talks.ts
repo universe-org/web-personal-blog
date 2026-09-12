@@ -14,6 +14,10 @@ export interface Talk {
   description: Record<Lang, string>;
   event: string;        // proper name — not translated
   location: string;
+  /** ISO 3166-1 alpha-2. Links the talk to a country on the map. */
+  country: string;
+  /** How it was delivered. Virtual talks still plot on the host country. */
+  mode: "in-person" | "virtual";
   date: string;         // ISO "YYYY-MM-DD". Drives ordering and upcoming/past.
   eventUrl?: string;
   slidesUrl?: string;
@@ -24,25 +28,32 @@ export interface Talk {
 
 export const talks: Talk[] = [
   {
-    slug: "talk-03",
-    date: "2026-11-30", // [REPLACE] the real date — a future date marks it "upcoming"
-    event: "[REPLACE] Event name",
-    location: "[REPLACE] Lima, PE",
+    slug: "egress-cilium",
+    date: "2026-11-30", // [REPLACE] fecha real del evento
+    event: "KCD Argentina 2026", // [REPLACE] confirmar el nombre exacto
+    location: "Argentina", // [REPLACE] ciudad
+    country: "AR",
+    mode: "in-person", // [REPLACE] si es virtual
     title: {
-      en: "[REPLACE] Talk title in English",
-      es: "[REPLACE] Título de la charla en español",
+      en: "Your agent can call anywhere: egress containment with Cilium",
+      es: "Tu agente puede llamar a cualquier lado: contención de egress con Cilium",
     },
     description: {
-      en: "[REPLACE] One or two sentences on what the talk covers and who it is for.",
-      es: "[REPLACE] Una o dos frases sobre qué cubre la charla y para quién es.",
+      en: "An agent decides at runtime which API it is going to call. That is its usefulness and also its problem: from the network's point of view it is a workload whose destination cannot be predicted at deploy time — and the same goes for any workload that resolves its egress dynamically. Native NetworkPolicy reasons about IP addresses, and that model cannot express \"this pod talks to these two APIs and nothing else\": the IP behind a name changes, and the policy stops meaning anything. Cilium solves it by reasoning about identities and domain names. In this talk I build an egress perimeter for a workload like that, we watch it work in Hubble, and we look at what this approach might not solve.",
+      es: "Un agente decide en tiempo de ejecución a qué API va a llamar. Esa es su utilidad y también su problema: desde la perspectiva de la red es una carga cuyo destino no podemos predecir al momento de desplegarla, y lo mismo ocurre para cualquier workload que resuelva su salida de manera dinámica. Las NetworkPolicy nativas razonan en direcciones IP, y ese modelo no puede expresar \"este pod habla con estas dos APIs y con nada más\": la IP detrás de un nombre cambia, y la política deja de tener razón de ser. Cilium resuelve eso razonando en identidades y en nombres de dominio. En esta charla armo un perímetro de egress para una carga de este tipo, lo veremos funcionar en Hubble, y mostraremos lo que este enfoque podría no resolver.",
     },
-    tags: ["[REPLACE]"],
+    // [REPLACE] cuando tengas la PPT: expórtala a PDF, ponla en public/slides/
+    // y descomenta la línea de abajo. O usa slidesUrl si la subes a un deck externo.
+    // slidesFile: "/slides/egress-cilium.pdf",
+    tags: ["Cilium", "Kubernetes", "eBPF", "Network policy", "Hubble"],
   },
   {
     slug: "golden-paths-backstage",
     date: "2026-08-22", // [REPLACE] fecha real del evento — decide si sale como "Dictada" o "Próxima"
     event: "KCD Lima 2026",
     location: "Lima, PE",
+    country: "PE",
+    mode: "in-person", // [REPLACE] si fue virtual
     title: {
       en: "Building Golden Paths for your team with Backstage",
       es: "Construyendo Golden Paths para tu equipo con Backstage",
@@ -61,6 +72,8 @@ export const talks: Talk[] = [
     date: "2026-06-13", // [REPLACE] fecha real del evento — decide si sale como "Dictada" o "Próxima"
     event: "GitHub Community Day Lima 2026",
     location: "Lima, PE",
+    country: "PE",
+    mode: "in-person", // [REPLACE] si fue virtual
     title: {
       en: "Your Pull Request as a firewall",
       es: "Tu Pull Request como firewall",
@@ -87,6 +100,15 @@ export const talksSorted = [...talks].sort((a, b) => {
   if (au !== bu) return au ? -1 : 1;
   return au ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date);
 });
+
+/** Talks grouped by country, for the map. Upcoming countries sort first. */
+export const talksByCountry = [...new Map(
+  talksSorted.map(t => [t.country, talksSorted.filter(x => x.country === t.country)])
+).entries()].map(([country, items]) => ({
+  country,
+  items,
+  hasUpcoming: items.some(t => isUpcoming(t)),
+}));
 
 export const talkCounts = {
   get total() { return talks.length; },

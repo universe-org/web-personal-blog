@@ -1,6 +1,7 @@
 ---
 import { ui } from "../data/site";
 import { talksSorted, isUpcoming, talkCounts } from "../data/talks";
+import TalksMap from "./TalksMap.astro";
 
 interface Props { lang: "en" | "es" }
 const { lang } = Astro.props;
@@ -18,6 +19,8 @@ const fmt = (d: string) =>
   <p class="lede">{k.lede}</p>
 </header>
 
+<TalksMap lang={lang} />
+
 <section class="panel sheet-gap">
   <div class="panel-head">
     <span class="panel-title">{k.heading}</span>
@@ -28,7 +31,7 @@ const fmt = (d: string) =>
     {talksSorted.map(talk => {
       const upcoming = isUpcoming(talk);
       return (
-        <article class={`talk-row ${upcoming ? "is-upcoming" : ""}`}>
+        <article class={`talk-row ${upcoming ? "is-upcoming" : ""}`} data-country={talk.country}>
           <div class="talk-side">
             <span class={`talk-state ${upcoming ? "is-upcoming" : ""}`}>
               {upcoming && <span class="status-dot" aria-hidden="true"></span>}
@@ -37,6 +40,7 @@ const fmt = (d: string) =>
             <time class="talk-date" datetime={talk.date}>{fmt(talk.date)}</time>
             <span class="talk-event">{talk.event}</span>
             <span class="talk-location">{talk.location}</span>
+            <span class="talk-mode">{talk.mode === "virtual" ? k.virtual : k.inPerson}</span>
           </div>
 
           <div class="talk-main">
@@ -85,6 +89,45 @@ const fmt = (d: string) =>
   </div>
 </section>
 
+<script>
+  // Two-way highlight between the map and the list. Both sides key off
+  // data-country, so neither component needs to know the other's markup.
+  const rows     = document.querySelectorAll<HTMLElement>(".talk-row[data-country]");
+  const shapes   = document.querySelectorAll<SVGElement>("[data-country].has-talks");
+  const markers  = document.querySelectorAll<SVGElement>(".marker[data-country]");
+
+  function setActive(cc: string | null) {
+    rows.forEach(el => el.classList.toggle("is-linked", cc !== null && el.dataset.country === cc));
+    shapes.forEach(el => el.classList.toggle("is-active", cc !== null && el.dataset.country === cc));
+    markers.forEach(el => el.classList.toggle("is-active", cc !== null && el.dataset.country === cc));
+  }
+
+  function bind(el: Element) {
+    const cc = (el as HTMLElement).dataset.country ?? null;
+    el.addEventListener("mouseenter", () => setActive(cc));
+    el.addEventListener("mouseleave", () => setActive(null));
+    el.addEventListener("focus", () => setActive(cc));
+    el.addEventListener("blur", () => setActive(null));
+  }
+
+  [...rows, ...shapes, ...markers].forEach(bind);
+
+  // Touch has no hover: tapping a marker scrolls to that country's first talk.
+  markers.forEach(marker => {
+    const cc = marker.dataset.country;
+    const go = () => {
+      setActive(cc ?? null);
+      document.querySelector(`.talk-row[data-country="${cc}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+    marker.addEventListener("click", go);
+    marker.addEventListener("keydown", (e) => {
+      const key = (e as KeyboardEvent).key;
+      if (key === "Enter" || key === " ") { e.preventDefault(); go(); }
+    });
+  });
+</script>
+
 <style>
   .dot { color: var(--accent); }
   .sheet-gap { margin-top: clamp(2.5rem, 5vw, 4rem); }
@@ -120,6 +163,18 @@ const fmt = (d: string) =>
   }
   .talk-event { font-size: 0.9375rem; font-weight: 700; color: var(--text); line-height: 1.35; }
   .talk-location { font-size: 0.8125rem; color: var(--text-3); }
+  .talk-mode {
+    align-self: flex-start;
+    font-family: var(--font-mono); font-size: 0.5625rem;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-3);
+    border: 1px solid var(--rule-2);
+    padding: 2px 7px;
+  }
+
+  /* Set from the map: this row's country is being pointed at. */
+  .talk-row.is-linked { background: var(--accent-soft); }
+  .talk-row.is-linked .talk-event { color: var(--accent); }
 
   .talk-main h3 { margin-bottom: 0.625rem; }
   /* Real abstracts run long; cap the measure so they stay readable. */

@@ -45,8 +45,19 @@ títulos de panel ni en el title block. No la reintroduzcas.
 EN y ES vuelvan a divergir: hay una sola implementación por hoja y el idioma es un parámetro.
 Si una página necesita algo distinto, va dentro del componente, condicionado por `lang`.
 
-`src/components/TopologyFigure.astro` es el diagrama del hero (Fig. 01). Los nombres de nodo son
-productos, así que no se traducen; solo `caption` y `center` entran como props.
+Dos componentes de figura, aparte de las hojas:
+
+- `TopologyFigure.astro` — el diagrama del hero (Fig. 01). Los nombres de nodo son productos,
+  así que no se traducen; solo `caption` y `center` entran como props.
+- `TalksMap.astro` — el mapamundi de charlas (Fig. 02), dentro de `TalksSheet`.
+
+### El contrato `data-country`
+
+El mapa y la lista de charlas se resaltan mutuamente, y lo hacen **sin conocerse**: ambos marcan
+sus elementos con `data-country="<ISO alpha-2>"`, y un único script en `TalksSheet.astro` alterna
+`.is-linked` (filas), `.is-active` (países y marcadores). Cada componente estiliza su propio
+estado activo. Si agregas otra vista que deba participar del resaltado, márcala igual y el script
+la toma sola.
 
 ## 2. Dónde vive el CSS
 
@@ -188,7 +199,15 @@ los dos idiomas — las ramas `en` y `es` de `ui` deben ser simétricas.
   reciente a más antigua), `isUpcoming()` y `talkCounts`. **El estado próxima/pasada se calcula
   desde `date` en cada build**, no hay flag manual que se quede obsoleto. Los slides van en
   `slidesFile` (PDF en `public/slides/`) y/o `slidesUrl` (deck externo); si no hay ninguno, la
-  fila muestra el aviso correspondiente.
+  fila muestra el aviso correspondiente. `country` (ISO alpha-2) enlaza la charla con el mapa y
+  `mode` distingue presencial de virtual — una charla virtual igual se plotea en el país del evento.
+- **`worldMap.ts`** — **archivo generado, no lo edites a mano.** Sale de Natural Earth 1:110m
+  (dominio público, sin requisito de atribución) vía `scripts/generate-world-map.mjs`. Las
+  dependencias del generador son build-time y **a propósito no están en `package.json`**, para no
+  romper el presupuesto de cero dependencias en runtime:
+  `npm i --no-save world-atlas topojson-client d3-geo i18n-iso-countries` y después
+  `node scripts/generate-world-map.mjs src/data/worldMap.ts`. Pesa ~155 KB e infla la página de
+  charlas a ~54 KB gzipped; es el precio del mapa y ya está medido.
 - **`posts.ts`** — índice de notas; exporta `postsByDate` (más reciente primero), que es lo que
   consume `NotesSheet`. `published: false` o ausente ⇒ se lista como "próximamente".
 - Agregar una categoría de proyecto = el tipo, `ui.portfolio.filter*` en los dos idiomas, y el
