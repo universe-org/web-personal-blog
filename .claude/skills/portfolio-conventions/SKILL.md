@@ -93,7 +93,7 @@ Definidos en `:root` (claro) y `html.dark` (oscuro) dentro de `@layer tokens`. U
 --accent                    verde profundo (claro) / menta (oscuro)
 --accent-ink                texto sobre --accent
 --accent-soft               relleno tenue del acento (nav activa, hover)
---font-sans (Space Grotesk) --font-mono (JetBrains Mono)
+--font-sans (IBM Plex Sans)  --font-mono (IBM Plex Mono)
 --sheet-w 1280px            ancho máximo del contenido
 --pad clamp(1.25rem,4vw,4rem)  padding lateral, compartido por shell y hojas
 --ease 140ms ease           toda transición
@@ -103,9 +103,14 @@ No hay `--radius`: el diseño no tiene esquinas redondeadas. No las agregues.
 
 ### Tipografía
 
-- **Space Grotesk** (`--font-sans`): fuente del `body`, títulos y prosa.
-- **JetBrains Mono** (`--font-mono`): etiquetas, cifras, fechas, tags, nav, eyebrows, title block,
+- **IBM Plex Sans** (`--font-sans`): fuente del `body`, títulos y prosa.
+- **IBM Plex Mono** (`--font-mono`): etiquetas, cifras, fechas, tags, nav, eyebrows, title block,
   `<code>` y los textos del diagrama. Siempre en mayúsculas con `letter-spacing` cuando es etiqueta.
+- Las dos son de la misma superfamilia, a propósito: IBM la encargó para su identidad de
+  ingeniería y el plano se lee como un solo sistema. **No las cambies por una geométrica de moda**
+  (Space Grotesk, Inter y compañía se probaron y se descartaron por genéricas).
+- IBM Plex es **humanista, no geométrica**: pide tracking más suelto. Los títulos van en
+  `-0.018em`, no en `-0.03em`; si aprietas más, los contraformas se cierran.
 - **No** uses mono para prosa (ledes, bullets, descripciones).
 - Se cargan con un único `<link>` a Google Fonts en `Base.astro`. ¿Otro peso? Edita ese query
   string; no agregues un segundo `<link>`.
