@@ -122,7 +122,8 @@ const fmt = (d: string) =>
   .talk-location { font-size: 0.8125rem; color: var(--text-3); }
 
   .talk-main h3 { margin-bottom: 0.625rem; }
-  .talk-desc { font-size: 0.9375rem; line-height: 1.65; }
+  /* Real abstracts run long; cap the measure so they stay readable. */
+  .talk-desc { font-size: 0.9375rem; line-height: 1.7; max-width: 68ch; }
 
   .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 1.125rem; }
 
