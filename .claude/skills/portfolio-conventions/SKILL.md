@@ -6,7 +6,8 @@ description: Convenciones de devopsuniverse-portfolio (Astro estático, EN/ES, G
 # Convenciones del portafolio
 
 Sitio Astro estático, bilingüe EN/ES, desplegado a GitHub Pages. Sin framework UI, sin Tailwind,
-sin dependencias de runtime. Astro `^4.15.0` (el latest publicado es 7.x — no asumas APIs de v5+).
+sin dependencias de runtime más allá de Astro. **Astro `^7.3.2`, y requiere Node ≥ 22.12**
+(declarado en `engines`; el workflow de deploy usa Node 22 — si bajas uno, baja el otro).
 
 El diseño es **"blueprint"**: un plano técnico. Papel cuadriculado, hairlines duras, esquinas a
 90° (`border-radius: 0` en todo), tipografía geométrica y un diagrama real como pieza central.
@@ -217,8 +218,11 @@ los dos idiomas — las ramas `en` y `es` de `ui` deben ser simétricas.
 
 - `npm run dev` / `build` / `preview`. Output `static`, `site: https://www.devopsuniverse.cloud`,
   `base: "/"` (dominio propio vía `public/CNAME`) — **no cambies `base`**.
-- `.github/workflows/deploy.yml` despliega en push a `main`. Pasa `GITHUB_SHA` al build:
-  aparece como `Rev.` en el title block.
+- `.github/workflows/deploy.yml` despliega en push a `main` con `npm ci` (no `npm install`: el
+  build sigue el lockfile exacto). Pasa `GITHUB_SHA` al build: aparece como `Rev.` en el title block.
+- **Mantén `astro` al día.** Todas las alertas de Dependabot que tuvo este repo venían de un solo
+  paquete: Astro 4.15 desactualizado. `vite`, `esbuild` y `sharp` son dependencias suyas, no del
+  proyecto — no las toques por separado. Revisa con `npm audit`.
 - **Integraciones con `npx astro add <nombre>`**, no editando `package.json` + `astro.config.mjs`
   a mano. `integrations: []` está vacío hoy.
 - No agregues dependencias de runtime sin preguntar. El presupuesto es HTML + CSS y los scripts
@@ -238,15 +242,14 @@ los dos idiomas — las ramas `en` y `es` de `ui` deben ser simétricas.
 
 No son convención, son trabajo sin terminar. Si tocas uno, resuélvelo:
 
-- `talks.ts` tiene las tres charlas con `[REPLACE]` en evento, fecha, título y descripción, y
-  sin slides enlazados.
+- `talks.ts` tiene las fechas de las tres charlas con `[REPLACE]`, y ninguna con slides
+  enlazados. La fecha decide si una charla sale como dictada o próxima.
 - `projects.ts` tiene URLs `github.com/[REPLACE]/…` — links rotos en producción.
 - `FORMSPREE_ID` sigue en `YOUR_FORMSPREE_ID` en los dos `contact.astro`; el form detecta que no
   está configurado y muestra el mensaje de error en vez de enviar al vacío.
 - `src/pages/blog/devsecops-github-actions.md` es plantilla con `[REPLACE]`, y ningún post enlaza
   todavía a su detalle (`published` es `undefined` en todos).
-- No hay `package-lock.json` y el workflow usa `npm install`: el build de producción no es
-  reproducible.
+
 
 ## 11. Commits
 
