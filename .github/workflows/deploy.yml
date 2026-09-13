@@ -26,12 +26,15 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Node
+        # Astro 7 requires Node >= 22.12.
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
 
       - name: Install dependencies
-        run: npm install
+        # ci, not install: builds must follow the lockfile exactly.
+        run: npm ci
 
       - name: Build
         run: npm run build
