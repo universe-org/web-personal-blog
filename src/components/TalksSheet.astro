@@ -1,0 +1,211 @@
+---
+import { ui } from "../data/site";
+import { talksSorted, isUpcoming, talkCounts } from "../data/talks";
+import TalksMap from "./TalksMap.astro";
+
+interface Props { lang: "en" | "es" }
+const { lang } = Astro.props;
+const k = ui[lang].talks;
+
+const locale = lang === "en" ? "en-US" : "es-PE";
+const fmt = (d: string) =>
+  new Date(`${d}T00:00:00Z`).toLocaleDateString(locale, {
+    year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
+  });
+---
+
+<header>
+  <h1>{k.heading}<span class="dot">.</span></h1>
+  <p class="lede">{k.lede}</p>
+</header>
+
+<TalksMap lang={lang} />
+
+<section class="panel sheet-gap">
+  <div class="panel-head">
+    <span class="panel-title">{k.heading}</span>
+    <span class="panel-note">{talkCounts.total}</span>
+  </div>
+
+  <div class="rows">
+    {talksSorted.map(talk => {
+      const upcoming = isUpcoming(talk);
+      return (
+        <article class={`talk-row ${upcoming ? "is-upcoming" : ""}`} data-country={talk.country}>
+          <div class="talk-side">
+            <span class={`talk-state ${upcoming ? "is-upcoming" : ""}`}>
+              {upcoming && <span class="status-dot" aria-hidden="true"></span>}
+              {upcoming ? k.upcoming : k.past}
+            </span>
+            <time class="talk-date" datetime={talk.date}>{fmt(talk.date)}</time>
+            <span class="talk-event">{talk.event}</span>
+            <span class="talk-location">{talk.location}</span>
+            <span class="talk-mode">{talk.mode === "virtual" ? k.virtual : k.inPerson}</span>
+          </div>
+
+          <div class="talk-main">
+            <h3>{talk.title[lang]}</h3>
+            <p class="talk-desc">{talk.description[lang]}</p>
+
+            {talk.tags && talk.tags.length > 0 && (
+              <div class="tag-row">
+                {talk.tags.map(tag => <span class="tag">{tag}</span>)}
+              </div>
+            )}
+
+            <div class="talk-links">
+              {talk.slidesFile && (
+                <a href={talk.slidesFile} target="_blank" rel="noopener" class="talk-link is-primary">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13"/><path d="M8 21h8M12 17v4"/></svg>
+                  {k.slidesPdf}
+                </a>
+              )}
+              {talk.slidesUrl && (
+                <a href={talk.slidesUrl} target="_blank" rel="noopener" class={`talk-link ${talk.slidesFile ? "" : "is-primary"}`}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="13"/><path d="M8 21h8M12 17v4"/></svg>
+                  {k.slides}
+                </a>
+              )}
+              {talk.videoUrl && (
+                <a href={talk.videoUrl} target="_blank" rel="noopener" class="talk-link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg>
+                  {k.watch}
+                </a>
+              )}
+              {talk.eventUrl && (
+                <a href={talk.eventUrl} target="_blank" rel="noopener" class="talk-link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                  {k.eventPage}
+                </a>
+              )}
+              {!talk.slidesFile && !talk.slidesUrl && (
+                <span class="talk-nolinks">{upcoming ? k.soonNote : k.noSlides}</span>
+              )}
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>
+
+<script>
+  // Two-way highlight between the map and the list. Both sides key off
+  // data-country, so neither component needs to know the other's markup.
+  const rows     = document.querySelectorAll<HTMLElement>(".talk-row[data-country]");
+  const shapes   = document.querySelectorAll<SVGElement>("[data-country].has-talks");
+  const markers  = document.querySelectorAll<SVGElement>(".marker[data-country]");
+
+  function setActive(cc: string | null) {
+    rows.forEach(el => el.classList.toggle("is-linked", cc !== null && el.dataset.country === cc));
+    shapes.forEach(el => el.classList.toggle("is-active", cc !== null && el.dataset.country === cc));
+    markers.forEach(el => el.classList.toggle("is-active", cc !== null && el.dataset.country === cc));
+  }
+
+  function bind(el: Element) {
+    const cc = (el as HTMLElement).dataset.country ?? null;
+    el.addEventListener("mouseenter", () => setActive(cc));
+    el.addEventListener("mouseleave", () => setActive(null));
+    el.addEventListener("focus", () => setActive(cc));
+    el.addEventListener("blur", () => setActive(null));
+  }
+
+  [...rows, ...shapes, ...markers].forEach(bind);
+
+  // Touch has no hover: tapping a marker scrolls to that country's first talk.
+  markers.forEach(marker => {
+    const cc = marker.dataset.country;
+    const go = () => {
+      setActive(cc ?? null);
+      document.querySelector(`.talk-row[data-country="${cc}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    };
+    marker.addEventListener("click", go);
+    marker.addEventListener("keydown", (e) => {
+      const key = (e as KeyboardEvent).key;
+      if (key === "Enter" || key === " ") { e.preventDefault(); go(); }
+    });
+  });
+</script>
+
+<style>
+  .dot { color: var(--accent); }
+  .sheet-gap { margin-top: clamp(2.5rem, 5vw, 4rem); }
+
+  .rows { display: flex; flex-direction: column; gap: 1px; background: var(--rule-2); }
+
+  .talk-row {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    gap: 1.75rem;
+    padding: 1.625rem 1.375rem;
+    background: var(--bg);
+    transition: background var(--ease);
+  }
+  .talk-row:hover { background: var(--bg-2); }
+  /* The next talk is the one to notice. */
+  .talk-row.is-upcoming {
+    background: var(--accent-soft);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+
+  .talk-side { display: flex; flex-direction: column; gap: 7px; }
+  .talk-state {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--font-mono); font-size: 0.625rem;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .talk-state.is-upcoming { color: var(--accent); }
+  .talk-date {
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.06em; color: var(--text-3);
+  }
+  .talk-event { font-size: 0.9375rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+  .talk-location { font-size: 0.8125rem; color: var(--text-3); }
+  .talk-mode {
+    align-self: flex-start;
+    font-family: var(--font-mono); font-size: 0.5625rem;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--text-3);
+    border: 1px solid var(--rule-2);
+    padding: 2px 7px;
+  }
+
+  /* Set from the map: this row's country is being pointed at. */
+  .talk-row.is-linked { background: var(--accent-soft); }
+  .talk-row.is-linked .talk-event { color: var(--accent); }
+
+  .talk-main h3 { margin-bottom: 0.625rem; }
+  /* Real abstracts run long; cap the measure so they stay readable. */
+  .talk-desc { font-size: 0.9375rem; line-height: 1.7; max-width: 68ch; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 1.125rem; }
+
+  .talk-links {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+    margin-top: 1.25rem;
+  }
+  .talk-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--rule);
+    font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text); text-decoration: none;
+    transition: background var(--ease), color var(--ease);
+  }
+  .talk-link:hover { background: var(--bg-3); }
+  .talk-link.is-primary { background: var(--accent); color: var(--accent-ink); }
+  .talk-link.is-primary:hover { background: var(--text); color: var(--bg); }
+
+  .talk-nolinks {
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.06em; color: var(--text-3);
+  }
+
+  @media (max-width: 780px) {
+    .talk-row { grid-template-columns: 1fr; gap: 0.875rem; }
+    .talk-side { flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: baseline; }
+  }
+</style>

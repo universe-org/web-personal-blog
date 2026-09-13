@@ -1,0 +1,10 @@
+---
+import Base from "../../layouts/Base.astro";
+import TalksSheet from "../../components/TalksSheet.astro";
+import { ui } from "../../data/site";
+
+const lang = "en";
+---
+<Base lang={lang} title={ui[lang].talks.heading}>
+  <TalksSheet lang={lang} />
+</Base>

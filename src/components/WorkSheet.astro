@@ -1,0 +1,172 @@
+---
+import { ui } from "../data/site";
+import { projects } from "../data/projects";
+
+interface Props { lang: "en" | "es" }
+const { lang } = Astro.props;
+const p = ui[lang].portfolio;
+
+const filters = [
+  { id: "all",        label: p.filterAll },
+  { id: "cloud",      label: p.filterCloud },
+  { id: "devsecops",  label: p.filterDevsecops },
+  { id: "automation", label: p.filterAutomation },
+  { id: "oss",        label: p.filterOss },
+];
+---
+
+<header>
+  <h1>{p.heading}<span class="dot">.</span></h1>
+  <p class="lede">{p.lede}</p>
+</header>
+
+<div class="filter-bar" id="filter-bar" role="group" aria-label={p.filterAll}>
+  {filters.map(f => (
+    <button type="button" data-filter={f.id} class={`filter-btn ${f.id === "all" ? "active" : ""}`}>
+      {f.label}
+    </button>
+  ))}
+</div>
+
+<div class="work-grid" id="projects-grid">
+  {projects.map(project => (
+    <article class="work-card" data-categories={project.categories.join(",")}>
+      <div class="work-head">
+        <span class="work-slug">{project.slug}</span>
+        {project.featured && <span class="work-featured">★ {p.featured}</span>}
+      </div>
+      <div class="work-body">
+        <h3>{project.title[lang]}</h3>
+        <p class="work-desc">{project.description[lang]}</p>
+        <div class="tag-row">
+          {project.tags.map(tag => <span class="tag">{tag}</span>)}
+        </div>
+      </div>
+      {(project.repoUrl || project.demoUrl) && (
+        <div class="work-links">
+          {project.repoUrl && (
+            <a href={project.repoUrl} target="_blank" rel="noopener">
+              {p.viewRepo}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+          )}
+          {project.demoUrl && (
+            <a href={project.demoUrl} target="_blank" rel="noopener">
+              {p.viewDemo}
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+            </a>
+          )}
+        </div>
+      )}
+    </article>
+  ))}
+</div>
+
+<p class="work-empty" id="work-empty" hidden>{p.empty}</p>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  const cards   = document.querySelectorAll<HTMLElement>(".work-card");
+  const empty   = document.getElementById("work-empty");
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter!;
+      buttons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      let shown = 0;
+      cards.forEach(card => {
+        const cats = card.dataset.categories!.split(",");
+        const show = filter === "all" || cats.includes(filter);
+        card.hidden = !show;
+        if (show) shown++;
+      });
+      if (empty) empty.hidden = shown > 0;
+    });
+  });
+</script>
+
+<style>
+  .dot { color: var(--accent); }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid var(--rule);
+    width: fit-content;
+    max-width: 100%;
+    margin: 2.5rem 0 2rem;
+  }
+  .filter-btn {
+    padding: 11px 18px;
+    font-family: var(--font-mono); font-size: 0.6875rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    background: transparent; color: var(--text-3);
+    border: none; border-left: 1px solid var(--rule);
+    cursor: pointer;
+    transition: color var(--ease), background var(--ease);
+  }
+  .filter-btn:first-child { border-left: none; }
+  .filter-btn:hover { color: var(--text); background: var(--bg-2); }
+  .filter-btn.active { background: var(--accent); color: var(--accent-ink); }
+
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--rule-2);
+    border: 1px solid var(--rule);
+  }
+  .work-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    transition: background var(--ease);
+  }
+  .work-card:hover { background: var(--bg-2); }
+
+  .work-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; padding: 9px 1.375rem;
+    border-bottom: 1px solid var(--rule-2);
+  }
+  .work-slug {
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.06em; color: var(--text-3);
+  }
+  .work-featured {
+    font-family: var(--font-mono); font-size: 0.625rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+  }
+
+  .work-body { padding: 1.375rem; flex: 1; }
+  .work-body h3 { margin-bottom: 0.625rem; }
+  .work-desc { font-size: 0.9375rem; line-height: 1.62; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 1.125rem; }
+
+  .work-links {
+    display: flex; gap: 1.25rem;
+    padding: 0.875rem 1.375rem;
+    border-top: 1px solid var(--rule-2);
+  }
+  .work-links a {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    text-decoration: none;
+  }
+  .work-links a:hover { text-decoration: underline; }
+
+  .work-empty {
+    font-family: var(--font-mono); font-size: 0.8125rem;
+    color: var(--text-3); margin-top: 2rem; text-align: center;
+  }
+
+  @media (max-width: 780px) {
+    .work-grid { grid-template-columns: 1fr; }
+    .filter-bar { width: 100%; }
+    .filter-btn { flex: 1; text-align: center; }
+  }
+</style>

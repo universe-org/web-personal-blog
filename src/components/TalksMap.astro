@@ -1,0 +1,246 @@
+---
+import { ui } from "../data/site";
+import { talksByCountry, isUpcoming } from "../data/talks";
+import { countries, countryByCode, GRATICULE, MAP_WIDTH, MAP_HEIGHT } from "../data/worldMap";
+
+interface Props { lang: "en" | "es" }
+const { lang } = Astro.props;
+const k = ui[lang].talks;
+
+const active = new Set(talksByCountry.map(g => g.country));
+
+// One marker per country, not per talk: the interaction is country-level.
+const markers = talksByCountry
+  .map(group => {
+    const c = countryByCode(group.country);
+    if (!c) return null;
+    const upcoming = group.items.filter(t => isUpcoming(t)).length;
+    return {
+      cc: group.country,
+      name: c.name,
+      cx: c.cx,
+      cy: c.cy,
+      count: group.items.length,
+      hasUpcoming: group.hasUpcoming,
+      allVirtual: group.items.every(t => t.mode === "virtual"),
+      label: `${c.name} — ${group.items.length} ${group.items.length === 1 ? k.mapOne : k.mapMany}`,
+      upcoming,
+    };
+  })
+  .filter((m): m is NonNullable<typeof m> => m !== null);
+---
+
+<section class="panel map-panel">
+  <div class="panel-head">
+    <span class="panel-title">{k.mapTitle}</span>
+    <span class="panel-note">{markers.length} {markers.length === 1 ? k.mapCountryOne : k.mapCountryMany}</span>
+  </div>
+
+  <div class="map-frame">
+    <svg
+      viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
+      class="world"
+      role="img"
+      aria-label={k.mapAria}
+    >
+      <path d={GRATICULE} class="graticule" />
+
+      <g class="landmass">
+        {countries.map(c => (
+          <path
+            d={c.d}
+            class={c.cc && active.has(c.cc) ? "country has-talks" : "country"}
+            data-country={c.cc && active.has(c.cc) ? c.cc : undefined}
+          />
+        ))}
+      </g>
+
+      <g class="markers">
+        {markers.map(m => (
+          <g
+            class={`marker ${m.hasUpcoming ? "is-upcoming" : ""} ${m.allVirtual ? "is-virtual" : ""}`}
+            data-country={m.cc}
+            role="button"
+            tabindex="0"
+            aria-label={m.label}
+          >
+            {/* Generous invisible hit area — the visible dot is small. */}
+            <circle cx={m.cx} cy={m.cy} r="18" class="marker-hit" />
+            <circle cx={m.cx} cy={m.cy} r="11" class="marker-ring" />
+            <circle cx={m.cx} cy={m.cy} r="4" class="marker-dot" />
+            <text x={m.cx} y={m.cy - 17} class="marker-label">{m.cc}{m.count > 1 && ` ×${m.count}`}</text>
+          </g>
+        ))}
+      </g>
+    </svg>
+
+    <p class="map-caption">{k.mapCaption}</p>
+  </div>
+
+  <div class="map-legend">
+    <span class="legend-item">
+      <span class="legend-swatch is-upcoming" aria-hidden="true"></span>{k.upcoming}
+    </span>
+    <span class="legend-item">
+      <span class="legend-swatch" aria-hidden="true"></span>{k.past}
+    </span>
+    <span class="legend-item">
+      <span class="legend-swatch is-virtual" aria-hidden="true"></span>{k.virtual}
+    </span>
+    <span class="legend-hint">{k.mapHint}</span>
+  </div>
+</section>
+
+<style>
+  .map-panel { margin-top: clamp(2.5rem, 5vw, 4rem); }
+
+  .map-frame { padding: 1.25rem 1.375rem 0.875rem; }
+
+  .world { width: 100%; height: auto; display: block; }
+
+  .graticule {
+    fill: none;
+    stroke: var(--rule-2);
+    stroke-width: 0.4;
+    opacity: 0.55;
+  }
+
+  /* The basemap is ground, not figure — but it still has to read as drawn
+     linework rather than a wash, so the stroke carries it, not the fill. */
+  .country {
+    fill: var(--bg-2);
+    stroke: var(--text-3);
+    stroke-width: 0.5;
+    stroke-linejoin: round;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* Countries that hold a talk are the only ones that read as figure. */
+  .country.has-talks {
+    fill: var(--accent-soft);
+    stroke: var(--accent);
+    stroke-width: 1.4;
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+    transition: fill var(--ease);
+  }
+  .country.has-talks.is-active { fill: var(--accent); }
+
+  .marker { cursor: pointer; }
+  .marker-hit { fill: transparent; }
+  .marker-ring {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1;
+    opacity: 0.45;
+    transition: opacity var(--ease), r var(--ease);
+  }
+  .marker-dot {
+    fill: var(--accent);
+    transition: r var(--ease);
+  }
+  /* Virtual-only: a hollow marker, the drafting convention for "not on site". */
+  .marker.is-virtual .marker-dot {
+    fill: var(--bg);
+    stroke: var(--accent);
+    stroke-width: 1.6;
+  }
+  .marker.is-upcoming .marker-ring {
+    opacity: 1;
+    stroke-dasharray: 3 2.5;
+  }
+
+  .marker-label {
+    text-anchor: middle;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.09em;
+    fill: var(--text-2);
+    pointer-events: none;
+    transition: fill var(--ease);
+  }
+
+  .marker.is-active .marker-ring { opacity: 1; r: 14; }
+  .marker.is-active .marker-dot { r: 5.5; }
+  .marker.is-active .marker-label { fill: var(--accent); }
+  .marker:focus-visible { outline: none; }
+  .marker:focus-visible .marker-ring { opacity: 1; stroke-width: 2; }
+
+  .map-caption {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-top: 0.5rem;
+  }
+
+  .map-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 0.75rem 1.375rem;
+    border-top: 1px solid var(--rule-2);
+    background: var(--bg-2);
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .legend-swatch {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+  .legend-swatch.is-upcoming { box-shadow: 0 0 0 3px var(--accent-soft); }
+  .legend-swatch.is-virtual {
+    background: var(--bg);
+    border: 1.5px solid var(--accent);
+  }
+  .legend-hint {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+  }
+
+  /* On a phone the SVG renders at roughly a third of its viewBox, so
+     960-unit detail collapses: the country codes would land at about 4px and
+     the dots at barely one. Here the map is a figure, not a control — the
+     labels go, the marks grow, and the list below carries the interaction.
+     Tapping a marker still works as a shortcut, it is just not the only path. */
+  @media (max-width: 700px) {
+    .marker-label { display: none; }
+    .marker-hit { r: 45; }
+    .marker-ring { r: 26; stroke-width: 2.5; }
+    .marker-dot { r: 12; }
+    .marker.is-virtual .marker-dot { stroke-width: 4; }
+    .marker.is-active .marker-ring { r: 30; }
+    .marker.is-active .marker-dot { r: 14; }
+
+    .country { stroke-width: 1.1; }
+    .country.has-talks { stroke-width: 3.5; }
+    .graticule { stroke-width: 1; }
+
+    .legend-hint { margin-left: 0; }
+  }
+
+  /* "Hover a country" is a lie on a touch device. */
+  @media (hover: none) {
+    .legend-hint { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .country.has-talks, .marker-ring, .marker-dot, .marker-label { transition: none; }
+  }
+</style>

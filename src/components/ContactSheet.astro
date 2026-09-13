@@ -1,0 +1,191 @@
+---
+import { ui, siteConfig } from "../data/site";
+
+interface Props {
+  lang: "en" | "es";
+  formspreeId: string;
+}
+const { lang, formspreeId } = Astro.props;
+const t = ui[lang];
+const c = t.contact;
+const configured = formspreeId !== "YOUR_FORMSPREE_ID" && formspreeId.length > 0;
+---
+
+<header>
+  <h1>{c.heading}<span class="dot">.</span></h1>
+  <p class="lede">{c.lede}</p>
+</header>
+
+<div class="contact-grid sheet-gap">
+
+  <section class="panel">
+    <div class="panel-head">
+      <span class="panel-title">{c.subheading}</span>
+      <span class="panel-note">
+        <span class="status-dot" aria-hidden="true"></span>
+        {siteConfig.availableForWork ? t.common.available : t.common.notAvailable}
+      </span>
+    </div>
+
+    <form id="contact-form" action={`https://formspree.io/f/${formspreeId}`} method="POST">
+      <div class="field">
+        <label for="cf-name">{c.nameLabel}</label>
+        <input id="cf-name" type="text" name="name" required placeholder={c.namePlaceholder} />
+      </div>
+      <div class="field">
+        <label for="cf-email">{c.emailLabel}</label>
+        <input id="cf-email" type="email" name="email" required placeholder={c.emailPlaceholder} />
+      </div>
+      <div class="field">
+        <label for="cf-message">{c.messageLabel}</label>
+        <textarea id="cf-message" name="message" required rows="7" placeholder={c.messagePlaceholder}></textarea>
+      </div>
+
+      <input type="hidden" name="_subject" value="[devopsuniverse.cloud] New contact" />
+
+      <div class="form-foot">
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">
+            {c.send}
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+          </button>
+        </div>
+        <p id="form-status" role="status" hidden></p>
+      </div>
+    </form>
+  </section>
+
+  <aside class="panel contact-side">
+    <div class="panel-head">
+      <span class="panel-title">{c.directly}</span>
+    </div>
+    <div class="side-rows">
+      <a class="side-row" href={`mailto:${siteConfig.email}`}>
+        <span class="side-label">Email</span>
+        <span class="side-value">{siteConfig.email}</span>
+      </a>
+      <a class="side-row" href={siteConfig.social.linkedin} target="_blank" rel="noopener">
+        <span class="side-label">LinkedIn</span>
+        <span class="side-value">david-aguirre-universe</span>
+      </a>
+      <a class="side-row" href={siteConfig.social.github} target="_blank" rel="noopener">
+        <span class="side-label">GitHub</span>
+        <span class="side-value">universe-org</span>
+      </a>
+      <div class="side-row static">
+        <span class="side-label">{lang === "en" ? "Location" : "Ubicación"}</span>
+        <span class="side-value">{siteConfig.location[lang]} · UTC−5</span>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<script define:vars={{ successMsg: c.successMsg, errorMsg: c.errorMsg, sending: c.sending, send: c.send, configured }}>
+  const form   = document.getElementById("contact-form");
+  const status = document.getElementById("form-status");
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector("button[type=submit]");
+
+    if (!configured) {
+      status.textContent = errorMsg;
+      status.className = "is-error";
+      status.hidden = false;
+      return;
+    }
+
+    const label = btn.innerHTML;
+    btn.textContent = sending;
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+      if (res.ok) {
+        form.reset();
+        status.textContent = successMsg;
+        status.className = "is-ok";
+      } else {
+        status.textContent = errorMsg;
+        status.className = "is-error";
+      }
+    } catch {
+      status.textContent = errorMsg;
+      status.className = "is-error";
+    }
+
+    status.hidden = false;
+    btn.innerHTML = label;
+    btn.disabled = false;
+  });
+</script>
+
+<style>
+  .dot { color: var(--accent); }
+  .sheet-gap { margin-top: clamp(2.5rem, 5vw, 4rem); }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  .panel-note { display: inline-flex; align-items: center; gap: 8px; }
+
+  form { padding: 1.5rem 1.375rem; display: flex; flex-direction: column; gap: 1.125rem; }
+
+  .field { display: flex; flex-direction: column; gap: 7px; }
+  .field label {
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
+  }
+  .field input,
+  .field textarea {
+    width: 100%;
+    background: var(--bg-2);
+    border: 1px solid var(--rule-2);
+    padding: 11px 13px;
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    outline: none;
+    transition: border-color var(--ease);
+  }
+  .field input::placeholder,
+  .field textarea::placeholder { color: var(--text-3); }
+  .field input:focus,
+  .field textarea:focus { border-color: var(--accent); }
+  .field textarea { resize: vertical; line-height: 1.6; }
+
+  .form-foot { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+  #form-status { font-family: var(--font-mono); font-size: 0.8125rem; margin: 0; }
+  #form-status.is-ok    { color: var(--accent); }
+  #form-status.is-error { color: #b03a2e; }
+  :global(html.dark) #form-status.is-error { color: #f07167; }
+
+  .side-rows { display: flex; flex-direction: column; gap: 1px; background: var(--rule-2); }
+  .side-row {
+    display: flex; flex-direction: column; gap: 5px;
+    padding: 1rem 1.375rem;
+    background: var(--bg);
+    text-decoration: none;
+    transition: background var(--ease);
+  }
+  .side-row:not(.static):hover { background: var(--bg-2); }
+  .side-label {
+    font-family: var(--font-mono); font-size: 0.625rem;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-3);
+  }
+  .side-value { font-size: 0.875rem; color: var(--text); word-break: break-word; }
+  a.side-row:hover .side-value { color: var(--accent); }
+
+  @media (max-width: 860px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+</style>

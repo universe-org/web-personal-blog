@@ -1,0 +1,218 @@
+---
+import { ui, siteConfig } from "../data/site";
+import { certifications, experience, openSource, skills, education, stats } from "../data/resume";
+
+interface Props { lang: "en" | "es" }
+const { lang } = Astro.props;
+const t = ui[lang];
+const r = t.resume;
+---
+
+<header class="sheet-head">
+  <div>
+    <h1>{r.heading}<span class="dot">.</span></h1>
+    <p class="lede">{r.lede}</p>
+  </div>
+  <div class="btn-row">
+    <a href={siteConfig.cvUrl} download class="btn btn-primary">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>
+      {r.download}
+    </a>
+  </div>
+</header>
+
+<!-- ── Experience ──────────────────────────────────────── -->
+<section class="panel sheet-gap">
+  <div class="panel-head">
+    <span class="panel-title">{r.expHeading}</span>
+    <span class="panel-note">{experience.length}</span>
+  </div>
+  <div class="rows">
+    {experience.map(job => (
+      <article class="exp-row">
+        <div class="exp-side">
+          <p class="exp-period">{job.period.replace("present", r.present)}</p>
+          <p class="exp-company">{job.company}</p>
+          {job.client && <p class="exp-client">{job.client}</p>}
+          <p class="exp-location">{job.location}</p>
+          {job.current && (
+            <p class="exp-current"><span class="status-dot" aria-hidden="true"></span>{r.present}</p>
+          )}
+        </div>
+        <div class="exp-main">
+          <h3>{job.role[lang]}</h3>
+          <ul class="exp-bullets">
+            {job.bullets[lang].map(b => <li>{b}</li>)}
+          </ul>
+          {job.tags && (
+            <div class="tag-row">
+              {job.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+          )}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<!-- ── Certifications ──────────────────────────────────── -->
+<section class="panel sheet-gap">
+  <div class="panel-head">
+    <span class="panel-title">{r.certHeading}</span>
+    <span class="panel-note">{stats.certifications}</span>
+  </div>
+  <div class="cells cells-3">
+    {certifications.map(group => (
+      <div class="cell">
+        <p class={`vendor vendor-${group.color}`}>{group.vendor}</p>
+        <div class="tag-row">
+          {group.items.map(item => (
+            item.url
+              ? <a href={item.url} target="_blank" rel="noopener" class={`tag cert-${group.color}`}>{item.name}</a>
+              : <span class={`tag cert-${group.color}`}>{item.name}</span>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<!-- ── Open source ─────────────────────────────────────── -->
+<section class="panel sheet-gap">
+  <div class="panel-head">
+    <span class="panel-title">{r.ossHeading}</span>
+  </div>
+  <div class="rows">
+    {openSource.map(oss => (
+      <article class="exp-row">
+        <div class="exp-side">
+          <p class="exp-period">{oss.period.replace("present", r.present)}</p>
+          <p class="exp-company">{oss.org}</p>
+        </div>
+        <div class="exp-main">
+          <h3><a href={oss.url} target="_blank" rel="noopener">{oss.project}</a></h3>
+          <p class="oss-desc">{oss.description[lang]}</p>
+          {oss.tags && (
+            <div class="tag-row">
+              {oss.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+          )}
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<!-- ── Skills ──────────────────────────────────────────── -->
+<section class="panel sheet-gap">
+  <div class="panel-head">
+    <span class="panel-title">{r.skillHeading}</span>
+    <span class="panel-note">{skills.length}</span>
+  </div>
+  <div class="rows">
+    {skills.map(group => (
+      <div class="skill-row">
+        <p class="skill-cat">{group.category[lang]}</p>
+        <div class="tag-row tight">
+          {group.items.map(item => <span class="tag">{item}</span>)}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<!-- ── Education ───────────────────────────────────────── -->
+<section class="panel sheet-gap">
+  <div class="panel-head">
+    <span class="panel-title">{r.eduHeading}</span>
+  </div>
+  <div class="cells cells-2">
+    {education.map(edu => (
+      <div class="cell">
+        <h3>{edu.degree[lang]}</h3>
+        <p class="edu-inst">{edu.institution}</p>
+        <p class="edu-meta">{edu.location}{edu.year && ` · ${edu.year}`}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .sheet-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .sheet-head h1 { margin: 0; }
+  .dot { color: var(--accent); }
+  .sheet-gap { margin-top: clamp(2.5rem, 5vw, 4rem); }
+
+  /* Rows share the 1px-gap rule trick with .cells */
+  .rows { display: flex; flex-direction: column; gap: 1px; background: var(--rule-2); }
+
+  .exp-row {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    gap: 1.75rem;
+    padding: 1.625rem 1.375rem;
+    background: var(--bg);
+  }
+  .exp-side { display: flex; flex-direction: column; gap: 5px; }
+  .exp-period {
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3);
+  }
+  .exp-company { font-size: 0.9375rem; font-weight: 700; color: var(--text); line-height: 1.35; }
+  .exp-client { font-size: 0.8125rem; color: var(--accent); }
+  .exp-location { font-size: 0.8125rem; color: var(--text-3); }
+  .exp-current {
+    display: flex; align-items: center; gap: 7px; margin-top: 3px;
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
+  }
+
+  .exp-main h3 { margin-bottom: 0.875rem; }
+  .exp-main h3 a { text-decoration: none; }
+  .exp-main h3 a:hover { text-decoration: underline; }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .exp-bullets li {
+    position: relative; padding-left: 1.125rem;
+    font-size: 0.9375rem; line-height: 1.6; color: var(--text-2);
+  }
+  .exp-bullets li::before {
+    content: ""; position: absolute; left: 0; top: 0.6em;
+    width: 7px; height: 1px; background: var(--accent);
+  }
+  .oss-desc { font-size: 0.9375rem; line-height: 1.65; }
+
+  .skill-row {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+    gap: 1.75rem;
+    align-items: baseline;
+    padding: 1.125rem 1.375rem;
+    background: var(--bg);
+  }
+  .skill-cat {
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3);
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 1rem; }
+  .tag-row.tight { margin-top: 0; }
+  a.tag { text-decoration: none; }
+  a.tag:hover { background: var(--accent-soft); }
+
+  .edu-inst { font-size: 0.875rem; color: var(--accent); margin-top: 7px; }
+  .edu-meta {
+    font-family: var(--font-mono); font-size: 0.6875rem;
+    color: var(--text-3); margin-top: 5px;
+  }
+
+  @media (max-width: 780px) {
+    .exp-row, .skill-row { grid-template-columns: 1fr; gap: 1rem; }
+    .exp-side { flex-direction: row; flex-wrap: wrap; gap: 10px; align-items: baseline; }
+  }
+</style>

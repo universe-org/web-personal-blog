@@ -1,0 +1,114 @@
+---
+// Fig. 01 — the multicloud delivery topology. Node labels are product names,
+// so nothing here is translated; only `caption` and `center` come from the page.
+interface Props {
+  caption: string;
+  center: string;
+}
+const { caption, center } = Astro.props;
+---
+<figure class="topology">
+  <svg viewBox="0 0 560 400" fill="none" role="img" aria-label={caption}>
+    <rect x="0.5" y="0.5" width="559" height="399" class="frame" />
+
+    <!-- Clouds -->
+    <g class="node">
+      <rect x="30" y="40"  width="108" height="44" />
+      <text x="84" y="67">GCP</text>
+    </g>
+    <g class="node">
+      <rect x="30" y="112" width="108" height="44" />
+      <text x="84" y="139">AWS</text>
+    </g>
+    <g class="node">
+      <rect x="30" y="184" width="108" height="44" />
+      <text x="84" y="211">Azure</text>
+    </g>
+    <g class="node">
+      <rect x="30" y="256" width="108" height="44" />
+      <text x="84" y="283">OCI</text>
+    </g>
+
+    <!-- Clouds → bus -->
+    <g class="wire">
+      <path d="M138 62h52v100h34" />
+      <path d="M138 134h52v28h34" />
+      <path d="M138 206h52v-44h34" />
+      <path d="M138 278h52v-116h34" />
+    </g>
+    <circle cx="224" cy="162" r="3" class="junction" />
+
+    <!-- Center -->
+    <rect x="240" y="120" width="128" height="84" class="core" />
+    <text x="304" y="152" class="core-text">{center}</text>
+    <text x="304" y="190" class="core-sub">terraform</text>
+
+    <!-- Bus → outputs -->
+    <g class="wire">
+      <path d="M368 162h44" />
+      <path d="M412 162v-72h44" />
+      <path d="M412 162v72h44" />
+      <path d="M412 162h44" />
+    </g>
+    <circle cx="412" cy="162" r="3" class="junction" />
+
+    <g class="node sm">
+      <rect x="456" y="70"  width="76" height="40" />
+      <text x="494" y="94">CI/CD</text>
+    </g>
+    <g class="node sm">
+      <rect x="456" y="142" width="76" height="40" />
+      <text x="494" y="166">AKS</text>
+    </g>
+    <g class="node sm">
+      <rect x="456" y="214" width="76" height="40" />
+      <text x="494" y="238">GHAS</text>
+    </g>
+
+    <path d="M30 330h502" class="soft-rule" />
+    <text x="30" y="352" class="caption">{caption}</text>
+  </svg>
+</figure>
+
+<style>
+  .topology { width: 100%; margin: 0; }
+  .topology svg { width: 100%; height: auto; display: block; }
+
+  .frame { stroke: var(--rule-2); stroke-dasharray: 4 4; fill: none; }
+  .soft-rule { stroke: var(--rule-2); }
+
+  .node rect { stroke: var(--rule); fill: var(--bg); stroke-width: 1; }
+  .node text {
+    text-anchor: middle;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    fill: var(--text);
+  }
+  .node.sm text { font-size: 10px; }
+
+  .wire path { stroke: var(--rule); stroke-width: 1; fill: none; }
+  .junction { fill: var(--rule); }
+
+  .core { stroke: var(--rule); stroke-width: 2; fill: var(--accent); }
+  .core-text {
+    text-anchor: middle;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 15px;
+    fill: var(--accent-ink);
+  }
+  .core-sub {
+    text-anchor: middle;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    fill: var(--accent-ink);
+    opacity: 0.72;
+  }
+
+  .caption {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    fill: var(--text-3);
+  }
+</style>
